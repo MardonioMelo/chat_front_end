@@ -61,8 +61,15 @@ main {
 
 .bg-input-chat{
   background-color: #5c5c5c !important;
-  border: 0;
+  border: none;
   color: #fff !important;  
+}
+
+.icon-home{
+  font-size: 2rem;
+  color: #fff;
+  pointer-events: none;
+  fill: currentColor;  
 }
 
 .icon-navbar{
