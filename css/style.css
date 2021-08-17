@@ -47,10 +47,12 @@ main {
 
 .bg-navbar{
   background-color: #424242;
+  width: 4.5rem
 }
 
 .bg-sidebar{
   background-color: #474747;
+  width: 380px;
 }
 
 .bg-chat{
@@ -66,15 +68,55 @@ main {
 .icon-navbar{
   font-size: 2rem;
   color: #ffffff73;
-
   pointer-events: none;
-  fill: currentColor;
+  fill: currentColor;  
 }
 
+.list-group-item{
+  background-color: #5c5c5c !important;
+  color: #fff !important;  
+  border-color: #ffffff73;
+}
 
+.list-group-item:focus{
+  background-color: rgb(146, 139, 139) !important;
+}
 
+.list-group-item:hover{
+  background-color: rgb(146, 139, 139) !important;
+}
 
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link{
+  background-color: #868284;
+}
 
+.nav-pills .nav-link:hover{
+  background-color: rgb(146, 139, 139) !important;
+}
 
+.bg-online{
+  background-color: #0ac970;
+}
 
+.border-bottom {
+  border-bottom: 1px solid #ffffff73!important;
+}
 
+.scrollarea::-webkit-scrollbar {
+  width: 12px;               /* width of the entire scrollbar */
+}
+
+.scrollarea::-webkit-scrollbar-thumb {
+  background-color: #ffffff4f;    /* color of the scroll thumb */
+  border-radius: 0px 5px 5px 0px;    /* roundness of the scroll thumb */ 
+}
+
+.msg-right{
+  border: none;
+  border-radius: 0px 15px 15px 35px !important;
+}
+
+.msg-left{
+  border: none;
+  border-radius: 15px 0px 35px 15px !important;
+}
