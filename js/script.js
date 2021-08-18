@@ -8,7 +8,11 @@
         new bootstrap.Tooltip(tooltipTriggerEl)
     })
 
-    //Constantes
+    //URLs
+    const url_host = "http://localhost:81"
+    const url_token = `${url_host}/chat_api/api/token`
+
+    //Variáveis    
     const token = ""
     const btn_send = document.getElementById('j_btn_send')
     const input_send = document.getElementById('j_input_send')
@@ -16,92 +20,45 @@
     const print_calls = document.getElementById('j_print_calls')
     const attendant_img_src = document.getElementById('j_attendant_img_src')
     const client_img_src = document.getElementById('j_client_img_src')
-    var attendant_name = ""
-    var attendant_img = ""
-    var attendant_uuid = ""
-    var client_name = ""
-    var client_img = ""
-    var client_uuid = ""
-    var history = [
-        {
-            "id": 1,
-            "call": 2,
-            "origin": "uuidstring1", //uuid do user de origem
-            "destiny": "uuistring2", //uuid do user de destino
-            "text": "Olá!", //mensagem
-            "type": "typestring", //text
-            "date": "17/08/2021 10:21",//data e hora
-            "url": "httpstring" //url do registro
-        },
-        {
-            "id": 2,
-            "call": 2,
-            "origin": "uuistring2", //uuid do user de origem
-            "destiny": "uuidstring1", //uuid do user de destino
-            "text": "Tudo bem?", //mensagem
-            "type": "typestring", //text
-            "date": "17/08/2021 10:21",//data e hora
-            "url": "httpstring" //url do registro
+    var item_call = []
+    var attendant_name = null
+    var attendant_img = null
+    var attendant_uuid = null
+    var client_name = null
+    var client_img = null
+    var client_uuid = null
+
+
+    //Obter token
+    function getToken() {
+        let identity =JSON.parse(sessionStorage.getItem("identity"))
+        console.log(identity)
+        //data request
+        let req = {
+            method: 'POST',
+            url: url_token,
+            data: identity,
+            headers: {},
+            mode: 'cors',
+            cache: 'default'
         }
-    ]
-    var call_data_clients = [  //dados dos clientes em espera
-        { //00 - corresponde ao id da call.
-            "user": { //dados do cliente
-                "id": 1, //id do cliente
-                "cpf": 1234556,
-                "uuid": "string",
-                "name": "string",
-                "lastname": "string",
-                "avatar": "",
-                "updated_at": "string",
-                "created_at": "string",
-                "url": "string"
-            },
-            "call": { //dados da call
-                "call_id": 2,
-                "call_client_uuid": "string",
-                "call_attendant_uuid": "string",
-                "call_objective": "string",
-                "call_status": 1,
-                "call_start": "string",
-                "call_end": "string",
-                "call_evaluation": null,
-                "call_update": "string"
-            }
-        },
-        { //00 - corresponde ao id da call.
-            "user": { //dados do cliente
-                "id": 1, //id do cliente
-                "cpf": 1234556,
-                "uuid": "string",
-                "name": "string",
-                "lastname": "string",
-                "avatar": "",
-                "updated_at": "string",
-                "created_at": "string",
-                "url": "string"
-            },
-            "call": { //dados da call
-                "call_id": 3,
-                "call_client_uuid": "string",
-                "call_attendant_uuid": "string",
-                "call_objective": "string",
-                "call_status": 1,
-                "call_start": "string",
-                "call_end": "string",
-                "call_evaluation": null,
-                "call_update": "string"
-            }
-        }
-    ]
-
-
-    function setToken() {
-
+        //request
+        axios(req)
+            .then(function (res) {
+                if (res.data.result) {
+                    console.log(res.data.error)
+                } else {
+                    console.log(res.data.error.msg)
+                }
+            })
+            .catch(function (err) {
+                console.log(err)
+            });
     }
 
-    function getToken() {
-
+    //Obter os itens da cariavel call
+    function getPrintCall() {
+        item_call = [...document.getElementsByClassName('j_item_call')]
     }
 
     //Set dados do cliente
@@ -109,27 +66,25 @@
         client_name = "Maria"
         client_img = "./img/monkey.jpg"
         client_uuid = "uuidstring1"
-
         client_img_src.src = client_img
     }
 
     //Set dados do atendente
-    function setAttendant() {
+    function setAttendant(cpf) {
         attendant_name = "Juca 2"
         attendant_img = "https://avatars.githubusercontent.com/u/45853582?v=4"
-        attendant_uuid = "uuistring2"
-
+        attendant_uuid = "b18c5dc2-0b2c-4a9a-be53-48beb8743e82"
         attendant_img_src.src = attendant_img
     }
 
     //Html da msg do cliente
-    function printCall(call, uuid, name, text, img, time) {
+    function printCall(call, uuid, name, text, img, time, online = false) {
         img = img ? img : "./img/monkey.jpg"
-        let html = `<a href="#" class="list-group-item list-group-item-action d-flex gap-3 py-3 position-relative"
+        let html = `<a href="#" class="list-group-item d-flex gap-3 py-3 m-1 rounded shadow-sm j_item_call"
                         data-call="${call}" data-uuid="${uuid}"
                         aria-current="true">
                         <span
-                            class="position-absolute top-50 start-75 translate-middle p-1 bg-success border border-light rounded-circle">
+                            class="position-absolute top-50 start-75 translate-middle p-1 bg-${online ? 'success' : 'danger'} border border-light rounded-circle">
                         </span>
                         <img src="${img}" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">
                         <div class="d-flex gap-2 w-100 justify-content-between">
@@ -146,7 +101,7 @@
     //Html da msg do cliente
     function printMsgClient(name, text, img = false) {
         img = img ? img : "./img/monkey.jpg"
-        let html = ` <a class="list-group-item list-group-item-action d-flex gap-3 py-3 p-3 w-75 m-2 msg-right shadow">
+        let html = ` <div class="list-group-item list-group-item d-flex gap-3 py-3 p-3 w-75 m-2 shadow msg-right">
                         <img src="${img}" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">
                         <div class="d-flex gap-2 w-100 justify-content-between">
                             <div>
@@ -155,13 +110,13 @@
                             </div>
                             <small class="opacity-50 text-nowrap">${hora()}</small>
                         </div>
-                    </a>`
+                    </div>`
         print_msg.insertAdjacentHTML('beforeend', html)
     }
 
     //Html da msg do atendente
     function printMsgAttendant(name, text) {
-        let html = `<a class="list-group-item list-group-item-action d-flex gap-3 py-3 p-3 w-75 m-2 align-self-end msg-left shadow">
+        let html = `<div class="list-group-item list-group-item d-flex gap-3 py-3 p-3 w-75 m-2 shadow align-self-end msg-left">
                         <div class="d-flex gap-2 w-100 justify-content-between">
                             <div>
                                 <h6 class="mb-0 fw-bold">${name}</h6>
@@ -169,7 +124,7 @@
                             </div>
                             <small class="opacity-50 text-nowrap">${hora()}</small>
                         </div>
-                    </a>`
+                    </div>`
         print_msg.insertAdjacentHTML('beforeend', html)
     }
 
@@ -205,23 +160,47 @@
         });
     }
 
-    //Listar fila de espera
-    function printListCall(calls) {
-        calls.forEach(function (data) {
-            printCall(data.call.call_id, data.user.uuid, data.user.name, data.call.call_objective, data.user.avatar, data.call.call_update)
-        });
+    //Atualizar Listar fila de call
+    function updateListCall() {
+
+        if (calls.result) {
+
+            Object.values(calls.error.data.clients).forEach(function (data) {
+                printCall(data.call.call_id, data.user.uuid, data.user.name, data.call.call_objective, data.user.avatar, formatHora(data.call.call_update))
+            });
+            getPrintCall()
+        } else {
+            console.log(calls.error.msg)
+        }
+    }
+
+    //Ativar call selecionada
+    function activeCall() {
+        item_call.forEach((data) => { data.classList.remove('call-active') });
+        this.classList.add('call-active');
+    }
+
+    //Formata data e hora para hora e minutos apenas
+    function formatHora(v) {
+        let now = new Date(v);
+        return now.getHours() + ":" + ("0" + now.getMinutes()).slice(-2);
     }
 
     //Init
     function init() {
+
+        getToken()
+
         setAttendant()
         setClient()
         btn_send.addEventListener("click", receiveMsg)
-        input_send.addEventListener("keypress", (e) => {
-            e.key == 'Enter' ? sendMsg() : null
+        input_send.addEventListener("keypress", (e) => { e.key == 'Enter' ? sendMsg() : null })
+        //printHistory(history)    
+        // updateListCall()
+
+        item_call.forEach(function (data, index) {
+            data.addEventListener('click', activeCall, false);
         })
-        printHistory(history)
-        printListCall(call_data_clients)
     }
 
     init()
