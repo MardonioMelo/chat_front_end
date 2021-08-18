@@ -12,10 +12,32 @@
     const btn_send = document.getElementById('j_btn_send')
     const input_send = document.getElementById('j_input_send')
     const print_msg = document.getElementById('j_print_msg')
-    const attendant_name = "Juca";
-    const attendant_img = "";
-    const client_name = "Maria";
-    const client_img = "";
+    const attendant_name = "Juca"
+    const attendant_img = ""
+    const client_name = "Maria"
+    const client_img = ""
+    const history = [
+        {
+            "id": 1,
+            "call": 2,
+            "origin": "uuidstring", //uuid do user de origem
+            "destiny": "uuistring", //uuid do user de destino
+            "text": "Olá!", //mensagem
+            "type": "typestring", //text
+            "date": "17/08/2021 10:21",//data e hora
+            "url": "httpstring" //url do registro
+        },
+        {
+            "id": 2,
+            "call": 2,
+            "origin": "uuidstring", //uuid do user de origem
+            "destiny": "uuistring", //uuid do user de destino
+            "text": "Tudo bem?", //mensagem
+            "type": "typestring", //text
+            "date": "17/08/2021 10:21",//data e hora
+            "url": "httpstring" //url do registro
+        }
+    ]
 
 
     //Html da msg do cliente
@@ -31,7 +53,7 @@
                             <small class="opacity-50 text-nowrap">${hora()}</small>
                         </div>
                     </a>`
-        print_msg.append(html)
+        print_msg.insertAdjacentHTML('beforeend', html)
     }
 
     //Html da msg do atendente
@@ -50,7 +72,14 @@
 
     //Enviar mensagem
     function sendMsg() {
-        printMsgAttendant(attendant_name, input_send.value,)
+        printMsgAttendant(attendant_name, input_send.value)
+        addScroll()
+    }
+
+    //Receber mensagem
+    function receiveMsg() {
+        printMsgClient(attendant_name, input_send.value, "")
+        addScroll()
     }
 
     //Hora e minutos da mensagem
@@ -59,12 +88,25 @@
         return now.getHours() + ":" + ("0" + now.getMinutes()).slice(-2);
     }
 
+    //Adicionar mais scroll
+    function addScroll() {
+        print_msg.scrollTop += 500
+    }
+
+    //Listar histórico de mensagens
+    function printHistory() {
+        history.forEach(function (msg) {              
+           printMsgClient(attendant_name, msg.text, client_img)
+        });
+    }
+
     //Init
     function init() {
-        btn_send.addEventListener("click", sendMsg)
+        btn_send.addEventListener("click", receiveMsg)
         input_send.addEventListener("keypress", (e) => {
             e.key == 'Enter' ? sendMsg() : null
         })
+        printHistory()
     }
 
     init()
