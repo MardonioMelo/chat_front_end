@@ -11,13 +11,17 @@
     <link href="css/bootstrap-5.1.0.min.css" rel="stylesheet">
     <!-- Font Icons -->
     <link href="css/bootstrap-icons-1.5.0/bootstrap-icons.css" rel="stylesheet">
+    <!-- Animate -->
+    <link href="css/animate-4.4.1.min.css" rel="stylesheet" />
     <!-- Custom styles -->
     <link href="css/style.css" rel="stylesheet" />
 </head>
 
 <body class="text-white">
 
-    <main>
+    <!--View Chat-->
+    <main id="j_view_chat">
+
         <!-- Start Navbar -->
         <div class="d-flex flex-column flex-shrink-0 bg-navbar">
             <a href="/" class="d-block p-3 text-center" title="Home" data-bs-toggle="tooltip" data-bs-placement="right">
@@ -167,25 +171,59 @@
                 <div class="input-group ">
                     <input type="text" class="form-control bg-input-chat" placeholder="Mensagem..." id="j_input_send">
                     <button class="btn btn-outline-secondary" id="j_btn_send">
-                        <i class="bi bi-arrow-right-circle-fill" style="font-size: 1.8rem;"></i>
+                        <i class="bi bi-telegram" style="font-size: 1.8rem;"></i>
                     </button>
                 </div>
             </div>
         </div>
         <!-- End chat -->
+
     </main>
+    <!--End Chat-->
+
+    <!--View Conectar-->
+    <div class="container view_conectar" id="j_view_conectar">
+        <div class="row justify-content-md-center">
+            <div class="col-md-auto">
+                <div class="card text-center py-5 p-3 w-100 m-2" style="width: 18rem;">
+                    <div class="card-body">
+                        <h3 class="card-title text-dark"><i class="bi bi-emoji-frown"></i> Opss!!!</h3>
+                        <p class="card-text text-dark">Não foi possível gerar sua autentificação.</p>
+                        <a href="/" class="btn btn-outline-primary btn-lg"><i class="bi bi-plug-fill"></i> Conectar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--End Conectar-->
+
+    <!--Start spinner -->
+    <div class="container view_conectar" id="j_spin_load">
+        <div class="row justify-content-md-center">
+            <div class="col-md-auto">
+                <div class="card text-center py-2 p-3  m-2 margin-top" >
+                    <div class="card-body">
+                        <img src="./img/carregando.gif" width="200" class="img-fluid " alt="">                        
+                        <h3 class="card-text text-dark">Aguarde enquanto validamos sua autentificação.</h3>                       
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--End spinner -->
 
     <!--Identificação-->
-    <script>       
+    <script>
         sessionStorage.setItem("identity", JSON.stringify({
-            "uuid": "369518462",
+            "uuid": "40516352016",
             "type": "attendant",
-            "public": "ffc6wwq2eb25f5asasf11a7f1b7546cb3ca"
+            "public": "28ca067230b119148dbedbdea1762e5c"
         }))
     </script>
     <!-- Scripts -->
     <script src="js/bootstrap.bundle-5.1.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="js/axios.min.js"></script>
+    <script src="js/sweetalert-2.1.2.min.js"></script>
     <script src="js/script.js"></script>
 </body>
 

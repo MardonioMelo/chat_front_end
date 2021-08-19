@@ -2,24 +2,21 @@
 
     'use strict'
 
-    /* global bootstrap: false */
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    tooltipTriggerList.forEach(function (tooltipTriggerEl) {
-        new bootstrap.Tooltip(tooltipTriggerEl)
-    })
-
-    //URLs
-    const url_host = "http://localhost:81"
+    //Variáveis de rotas
+    const url_host = "http://localhost"
     const url_token = `${url_host}/chat_api/api/token`
-
-    //Variáveis    
-    const token = ""
+    //Variáveis do DOM      
     const btn_send = document.getElementById('j_btn_send')
     const input_send = document.getElementById('j_input_send')
     const print_msg = document.getElementById('j_print_msg')
     const print_calls = document.getElementById('j_print_calls')
     const attendant_img_src = document.getElementById('j_attendant_img_src')
     const client_img_src = document.getElementById('j_client_img_src')
+    const view_chat = document.getElementById('j_view_chat')
+    const view_conectar = document.getElementById('j_view_conectar')
+    const spin_load = document.getElementById('j_spin_load')
+    //Variáveis de dados
+    var token = null
     var item_call = []
     var attendant_name = null
     var attendant_img = null
@@ -29,32 +26,11 @@
     var client_uuid = null
 
 
-    //Obter token
-    function getToken() {
-        let identity =JSON.parse(sessionStorage.getItem("identity"))
-        console.log(identity)
-        //data request
-        let req = {
-            method: 'POST',
-            url: url_token,
-            data: identity,
-            headers: {},
-            mode: 'cors',
-            cache: 'default'
-        }
-        //request
-        axios(req)
-            .then(function (res) {
-                if (res.data.result) {
-                    console.log(res.data.error)
-                } else {
-                    console.log(res.data.error.msg)
-                }
-            })
-            .catch(function (err) {
-                console.log(err)
-            });
-    }
+    /* global bootstrap: false */
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+        new bootstrap.Tooltip(tooltipTriggerEl)
+    })
 
     //Obter os itens da cariavel call
     function getPrintCall() {
@@ -101,7 +77,7 @@
     //Html da msg do cliente
     function printMsgClient(name, text, img = false) {
         img = img ? img : "./img/monkey.jpg"
-        let html = ` <div class="list-group-item list-group-item d-flex gap-3 py-3 p-3 w-75 m-2 shadow msg-right">
+        let html = ` <div class="list-group-item list-group-item d-flex gap-3 py-3 p-3 w-75 m-2 shadow msg-right animate__animated animate__fadeInDown">
                         <img src="${img}" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">
                         <div class="d-flex gap-2 w-100 justify-content-between">
                             <div>
@@ -116,7 +92,7 @@
 
     //Html da msg do atendente
     function printMsgAttendant(name, text) {
-        let html = `<div class="list-group-item list-group-item d-flex gap-3 py-3 p-3 w-75 m-2 shadow align-self-end msg-left">
+        let html = `<div class="list-group-item list-group-item d-flex gap-3 py-3 p-3 w-75 m-2 shadow align-self-end msg-left animate__animated animate__fadeInDown">
                         <div class="d-flex gap-2 w-100 justify-content-between">
                             <div>
                                 <h6 class="mb-0 fw-bold">${name}</h6>
@@ -162,9 +138,7 @@
 
     //Atualizar Listar fila de call
     function updateListCall() {
-
         if (calls.result) {
-
             Object.values(calls.error.data.clients).forEach(function (data) {
                 printCall(data.call.call_id, data.user.uuid, data.user.name, data.call.call_objective, data.user.avatar, formatHora(data.call.call_update))
             });
@@ -186,17 +160,105 @@
         return now.getHours() + ":" + ("0" + now.getMinutes()).slice(-2);
     }
 
-    //Init
+    //###############
+    //  TOKEN
+    //###############
+
+    //Obter token
+    function createToken() {
+
+        let identity = JSON.parse(sessionStorage.getItem("identity"))
+        let data = new FormData();
+        data.append('uuid', identity.uuid);
+        data.append('type', identity.type);
+        data.append('public', identity.public);
+
+        //Config request
+        let config = {
+            method: 'post',
+            url: url_token,
+            headers: { 'Content-Type': 'form-data' },
+            data: data,
+            mode: 'cors'
+        }
+
+        changeState('block', 'none', 'none')
+
+        //Request
+        axios(config)
+            .then(function (res) {
+                if (res.data.result) {
+                    saveDataToken(res.data.error)
+                    changeState('none', 'none', 'block')
+                    location = location.href
+                } else {
+                    changeState('none', 'block', 'none')
+                    swal("Opss!!", res.data.error.msg, "error");
+                }
+            })
+            .catch(function (err) {
+                changeState('none', 'block', 'none')
+                swal("Opss!!", "Não foi possível gerar sua autentificação, verifique sua conexão.", "error");
+            });
+
+    }
+
+    //Salvar token no session storage
+    function saveDataToken(data) {
+        if (data == null) {
+            sessionStorage.setItem('token_chat', "");
+        } else {
+            sessionStorage.setItem('token_chat', data.token);
+        }
+    }
+
+    //Recuperar token do session storage
+    function getToken() {
+        return sessionStorage.getItem('token_chat');
+    }
+
+    //Tempo atual em segundos
+    function getNowSeg() {
+        return parseInt(Date.now() / 1000)
+    }
+
+    //Tempo de expiração do token
+    function getExpTime(token) {
+        var [, base] = token.split(".")
+        return JSON.parse(atob(base)).exp
+    }
+
+    //Mudar status da página
+    function changeState(a, b, c) {
+        spin_load.style.display = a
+        view_conectar.style.display = b
+        view_chat.style.display = c
+    }
+
+    //###############
+    //  INICIAR
+    //###############
+
+    function groupMethod() {
+
+    }
+
     function init() {
 
-        getToken()
+        token = getToken()
+
+        if (token == null || token == "" || getNowSeg() > getExpTime(token)) {
+            createToken()
+        } else {
+            changeState('none', 'none', '')           
+        }
 
         setAttendant()
         setClient()
         btn_send.addEventListener("click", receiveMsg)
         input_send.addEventListener("keypress", (e) => { e.key == 'Enter' ? sendMsg() : null })
-        //printHistory(history)    
-        // updateListCall()
+        // printHistory(history)    
+        //  updateListCall()
 
         item_call.forEach(function (data, index) {
             data.addEventListener('click', activeCall, false);
