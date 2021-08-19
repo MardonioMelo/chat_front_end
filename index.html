@@ -19,7 +19,7 @@
     <script src="main.js"></script>
 </head>
 
-<body class="text-white">
+<body class="text-white bg-secondary">
 
     <!--View Chat-->
     <main id="j_view_chat" style="display: none;">
@@ -101,7 +101,7 @@
         <!-- Start Chat -->
         <div class="container-fluid d-flex flex-column bg-chat">
 
-            <div class="py-3 mb-3 border-bottom">
+            <div class="py-3 mb-3 border-bottom d-none">
                 <div href="#" class="d-flex gap-3 py-1">
                     <img src="" alt="cliente" width="32" height="32" class="rounded-circle flex-shrink-0"
                         id="j_client_img_src">
@@ -109,8 +109,8 @@
                         <div>
                             <h6 class="mb-0 fw-bold">Nome do usuário</h6>
                             <p class="mb-0 opacity-75">
-                                <span class="badge bg-success">Online</span>
-                                <!-- <span class="badge bg-danger">Offline</span> -->
+                                <!-- <span class="badge bg-success"><i class="bi bi-wifi"></i> Online</span> -->
+                                <!-- <span class="badge bg-danger"><i class="bi bi-wifi-off"></i> Offline</span> -->
                                 <span class="p-2 ms-2 fw-bold"><i class="bi bi-alarm"></i> Espera: 00:00</span>
                             </p>
                         </div>
@@ -124,6 +124,13 @@
             </div>
 
             <div class="list-group list-group-flush scrollarea" id="j_print_msg">
+               
+                <div class="card bg-dark gap-3 py-3 p-2 m-5">
+                    <div class="card-body text-center">
+                      <h2><i class="bi bi-arrow-left"></i> Clique em um cliente da lista.</h2>                    
+                    </div>
+                </div>
+
                 <!-- Cliente -->
                 <!-- <div class="list-group-item list-group-item d-flex gap-3 py-3 p-3 w-75 m-2 shadow msg-right">
                     <img src="./img/monkey.jpg" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">
@@ -169,7 +176,7 @@
             </div> -->
 
             <!-- Input de Mensagens -->
-            <div class="mt-auto text-white-50 py-3">
+            <div class="mt-auto text-white-50 py-3 d-none">
                 <div class="input-group ">
                     <input type="text" class="form-control bg-input-chat" placeholder="Mensagem..." id="j_input_send">
                     <button class="btn btn-outline-secondary" id="j_btn_send">
@@ -184,15 +191,15 @@
     <!--End Chat-->
 
     <!--View Conectar-->
-    <div class="container view_conectar" id="j_view_conectar" style="display: block;">
+    <div class="container" id="j_view_conectar" style="display: block;">
         <div class="row justify-content-md-center">
             <div class="col-md-auto">
-                <div class="card text-center py-5 p-3 w-100 m-2" style="width: 18rem;">
+                <div class="card text-center py-5 p-3 m-5 bg-dark" >
                     <div class="card-body">
-                        <h3 class="card-title text-dark"><i class="bi bi-emoji-frown"></i> Opss!!!</h3>
-                        <p class="card-text text-dark">Não foi possível gerar sua autentificação, verifique sua conexão
+                        <h3 class="card-title"><i class="bi bi-emoji-frown"></i> Opss!!!</h3>
+                        <p class="card-text">Não foi possível gerar sua autentificação, verifique sua conexão
                             e os dados informados.</p>
-                        <a href="/" class="btn btn-outline-primary btn-lg"><i class="bi bi-plug-fill"></i> Conectar</a>
+                        <a href="/" class="btn btn-outline-light btn-lg"><i class="bi bi-plug-fill"></i> Conectar</a>
                     </div>
                 </div>
             </div>
@@ -201,20 +208,20 @@
     <!--End Conectar-->
 
     <!--Start spinner -->
-    <div class="container view_conectar" id="j_spin_load" style="display: none;">
+    <div class="container" id="j_spin_load" style="display: none;">
         <div class="row justify-content-md-center">
             <div class="col-md-auto">
-                <div class="card text-center py-2 p-3  m-2 margin-top">
+                <div class="card text-center py-5 p-5 m-5 bg-dark">
                     <div class="card-body">
-                        <img src="assets/img/carregando.gif" width="200" class="img-fluid " alt="">
-                        <h3 class="card-text text-dark">Aguarde enquanto validamos sua autentificação.</h3>
+                        <img src="assets/img/carregando.gif" width="100" class="img-fluid " alt="">
+                        <h3 class="card-text">Aguarde enquanto validamos sua autentificação...</h3>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <!--End spinner -->
-   
+
     <!-- Scripts -->
     <script src="assets/js/bootstrap.bundle-5.1.0.min.js"></script>
     <script src="assets/js/axios.min.js"></script>

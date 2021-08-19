@@ -8,5 +8,5 @@ sessionStorage.setItem("my_setup", JSON.stringify({
     "type": "attendant",
     "public": "ffc6wwq2eb25f5asasf11a7f1b7546cb3ca",
     "host_http": "http://localhost:81/chat_api/api",
-    "host_ws": "localhost:8081"
+    "host_ws": "ws://localhost:8081/api"
 }))
