@@ -2,9 +2,11 @@
 
     'use strict'
 
-    //Variáveis de rotas
-    const url_host = "http://localhost"
-    const url_token = `${url_host}/chat_api/api/token`
+    //Setup
+    const my_setup = getSetup()
+    //Variáveis de rotas    
+    const url_token = `${my_setup.host_http}/token`
+    const url_perfil = `${my_setup.host_http}/attendant/perfil`
     //Variáveis do DOM      
     const btn_send = document.getElementById('j_btn_send')
     const input_send = document.getElementById('j_input_send')
@@ -16,7 +18,7 @@
     const view_conectar = document.getElementById('j_view_conectar')
     const spin_load = document.getElementById('j_spin_load')
     //Variáveis de dados
-    var token = null
+    var token = getToken()
     var item_call = []
     var attendant_name = null
     var attendant_img = null
@@ -32,30 +34,63 @@
         new bootstrap.Tooltip(tooltipTriggerEl)
     })
 
-    //Obter os itens da cariavel call
+    //Consultar setup
+    function getSetup() {
+        return JSON.parse(sessionStorage.getItem("my_setup"))
+    }
+
+    //Obter os itens de call
     function getPrintCall() {
         item_call = [...document.getElementsByClassName('j_item_call')]
+    }
+
+    //Set dados do atendente
+    function setAttendant() {        
+
+        //Config request
+        let config = {
+            method: 'GET',
+            url: url_perfil,
+            headers: {
+                'Content-Type': 'none',
+                'Authorization': token,
+                'Access-Control-Allow-Origin': '*'
+            },
+            mode: 'cors'           
+        }
+
+        //Request
+        axios(config)
+            .then(function (res) {               
+                if (res.data.result) {
+                    console.log(res.data.error)
+
+                } else {
+                    swal("Opss!!", res.data.error.msg, "error");
+                }
+            })
+            .catch(function (err) {
+                console.log(err)
+                swal("Opss!!", "Erro na conexão.", "error");
+            });
+
+        attendant_name = "Juca 2"
+        attendant_img = "https://avatars.githubusercontent.com/u/45853582?v=4"
+        attendant_uuid = getDataToken().uuid
+        attendant_img_src.src = attendant_img
     }
 
     //Set dados do cliente
     function setClient() {
         client_name = "Maria"
-        client_img = "./img/monkey.jpg"
+        client_img = "./assets/img/monkey.jpg"
         client_uuid = "uuidstring1"
         client_img_src.src = client_img
     }
 
-    //Set dados do atendente
-    function setAttendant(cpf) {
-        attendant_name = "Juca 2"
-        attendant_img = "https://avatars.githubusercontent.com/u/45853582?v=4"
-        attendant_uuid = "b18c5dc2-0b2c-4a9a-be53-48beb8743e82"
-        attendant_img_src.src = attendant_img
-    }
-
     //Html da msg do cliente
     function printCall(call, uuid, name, text, img, time, online = false) {
-        img = img ? img : "./img/monkey.jpg"
+        img = img ? img : "./assets/img/monkey.jpg"
         let html = `<a href="#" class="list-group-item d-flex gap-3 py-3 m-1 rounded shadow-sm j_item_call"
                         data-call="${call}" data-uuid="${uuid}"
                         aria-current="true">
@@ -76,7 +111,7 @@
 
     //Html da msg do cliente
     function printMsgClient(name, text, img = false) {
-        img = img ? img : "./img/monkey.jpg"
+        img = img ? img : "./assets/img/monkey.jpg"
         let html = ` <div class="list-group-item list-group-item d-flex gap-3 py-3 p-3 w-75 m-2 shadow msg-right animate__animated animate__fadeInDown">
                         <img src="${img}" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">
                         <div class="d-flex gap-2 w-100 justify-content-between">
@@ -160,6 +195,7 @@
         return now.getHours() + ":" + ("0" + now.getMinutes()).slice(-2);
     }
 
+
     //###############
     //  TOKEN
     //###############
@@ -167,19 +203,21 @@
     //Obter token
     function createToken() {
 
-        let identity = JSON.parse(sessionStorage.getItem("identity"))
         let data = new FormData();
-        data.append('uuid', identity.uuid);
-        data.append('type', identity.type);
-        data.append('public', identity.public);
+        data.append('uuid', my_setup.uuid);
+        data.append('type', my_setup.type);
+        data.append('public', my_setup.public);
 
         //Config request
         let config = {
-            method: 'post',
+            method: 'POST',
             url: url_token,
-            headers: { 'Content-Type': 'form-data' },
+            headers: {
+                'Content-Type': 'form-data',
+                'Access-Control-Allow-Origin': '*'          
+            },
             data: data,
-            mode: 'cors'
+            mode: 'cors'            
         }
 
         changeState('block', 'none', 'none')
@@ -200,7 +238,6 @@
                 changeState('none', 'block', 'none')
                 swal("Opss!!", "Não foi possível gerar sua autentificação, verifique sua conexão.", "error");
             });
-
     }
 
     //Salvar token no session storage
@@ -223,9 +260,15 @@
     }
 
     //Tempo de expiração do token
-    function getExpTime(token) {
+    function getExpTime() {
         var [, base] = token.split(".")
         return JSON.parse(atob(base)).exp
+    }
+
+    //Tempo de expiração do token
+    function getDataToken() {
+        var [, base] = token.split(".")
+        return JSON.parse(atob(base)).data
     }
 
     //Mudar status da página
@@ -235,34 +278,31 @@
         view_chat.style.display = c
     }
 
+
     //###############
     //  INICIAR
-    //###############
-
-    function groupMethod() {
-
-    }
+    //###############   
 
     function init() {
 
-        token = getToken()
-
-        if (token == null || token == "" || getNowSeg() > getExpTime(token)) {
+        if (token == null || token == "" || getNowSeg() > getExpTime()) {
             createToken()
         } else {
-            changeState('none', 'none', '')           
+            changeState('none', 'none', '')
+
+            setAttendant()
+            setClient()
+            btn_send.addEventListener("click", receiveMsg)
+            input_send.addEventListener("keypress", (e) => { e.key == 'Enter' ? sendMsg() : null })
+            // printHistory(history)    
+            //  updateListCall()
+
+            item_call.forEach(function (data, index) {
+                data.addEventListener('click', activeCall, false);
+            })
         }
 
-        setAttendant()
-        setClient()
-        btn_send.addEventListener("click", receiveMsg)
-        input_send.addEventListener("keypress", (e) => { e.key == 'Enter' ? sendMsg() : null })
-        // printHistory(history)    
-        //  updateListCall()
 
-        item_call.forEach(function (data, index) {
-            data.addEventListener('click', activeCall, false);
-        })
     }
 
     init()
