@@ -7,7 +7,7 @@
     //Variáveis de rotas    
     const url_token = `${my_setup.host_http}/token`
     const url_perfil = `${my_setup.host_http}/attendant/perfil`
-    const url_ws = `${my_setup.host_ws}/attendant`
+    const url_ws = `${my_setup.host_ws}`
     //Variáveis do DOM      
     const btn_send = document.getElementById('j_btn_send')
     const input_send = document.getElementById('j_input_send')
@@ -23,6 +23,7 @@
     var token = getToken()
     var attendant = null
     var conn_ws = null
+    var messages = null
     var item_call = []
     var client = null
     var calls = null
@@ -181,45 +182,40 @@
 
     //Abrir conexão
     function openConSocket() {
-        conn_ws = new WebSocket(url_ws); 
-         
-        conn_ws.addEventListener('open',  message => {
-            //const data = JSON.parse(message)
-            console.log(message)
+
+        //Informe o token na url
+        conn_ws = new WebSocket(`${url_ws}/?t=${token.split(' ')[1]}`);
+
+        conn_ws.addEventListener('open', open => {
+            console.log("Conexão aberta!")
         })
 
         conn_ws.addEventListener('message', message => {
-            console.log(message)
-        })
+            messages = JSON.parse(message.data)           
 
-        conn_ws.addEventListener('error', message => {
-            console.log(message)
-        })
-
-        conn_ws.addEventListener('close', message => {
-            console.log(message)
-        })
-       
-
-       // conn_ws.onopen
-       //getNewMessage()
-
-    }    
-
-    //Receber msg
-    function getNewMessage() {
-        conn_ws.onmessage = function (e) {
-            let data = JSON.parse(e.data)
-
-            if (data.result) {
-
+            if (messages.result) {
+                swal("Sucesso", messages.error.msg, "success");
+                console.log(messages.error)               
             } else {
-                swal("Opss!!", data.error.msg, "error");
+                swal("Atenção", message.error.msg, "warning");
             }
+        })
 
-            console.log(data)
-        };
-    }
+        conn_ws.addEventListener('error', error => {
+            swal("Opss!!", "Error na conexão com o servidor!", "error");           
+        })
+
+        conn_ws.addEventListener('close', close => {
+            if (close.code == 1006) {
+                swal("Opss!!", "O servidor WS está offline!", "error");
+            } else if (close.code == 1000) {
+                swal("Sucesso", "Conexão encerrada!", "success");                            
+            }
+        })
+
+        // conn_ws.onopen
+        //getNewMessage()      
+    }    
 
     //Enviar msg
     function sendMessage(msg) {
@@ -227,16 +223,10 @@
     }
 
     //Fechar conexão
-    function closeConn() { 
+    function closeConn() {
         conn_ws.close()
-     }
-
-
-    //conn_ws.close()
-
-    openConSocket()
-
-
+    }
+    
 
     //###############
     //  CALL
@@ -398,6 +388,7 @@
             createToken()
         } else {
             changeState('none', 'none', '')
+            openConSocket()
             btn_send.addEventListener("click", receiveMsg)
             input_send.addEventListener("keypress", (e) => { e.key == 'Enter' ? sendMsg() : null })
             setAttendant()
