@@ -153,7 +153,7 @@
                 url: url_perfil,
                 headers: {
                     'Content-Type': 'none',
-                    'Authorization': token,
+                    'Authorization': `Bearer ${token}`,
                     'Access-Control-Allow-Origin': '*'
                 },
                 mode: 'cors'
@@ -181,10 +181,10 @@
     //###############
 
     //Abrir conexão
-    function openConSocket() {
+    function initSocket() {
 
         //Informe o token na url
-        conn_ws = new WebSocket(`${url_ws}/?t=${token.split(' ')[1]}`);
+        conn_ws = new WebSocket(`${url_ws}/?t=${token}`);
 
         conn_ws.addEventListener('open', open => {
             console.log("Conexão aberta!")
@@ -209,12 +209,9 @@
             if (close.code == 1006) {
                 swal("Opss!!", "O servidor WS está offline!", "error");
             } else if (close.code == 1000) {
-                swal("Sucesso", "Conexão encerrada!", "success");                            
+                swal("Atenção", "Conexão encerrada!", "info");                            
             }
-        })
-
-        // conn_ws.onopen
-        //getNewMessage()      
+        })       
     }    
 
     //Enviar msg
@@ -388,7 +385,7 @@
             createToken()
         } else {
             changeState('none', 'none', '')
-            openConSocket()
+            initSocket()
             btn_send.addEventListener("click", receiveMsg)
             input_send.addEventListener("keypress", (e) => { e.key == 'Enter' ? sendMsg() : null })
             setAttendant()
