@@ -181,11 +181,30 @@
 
     //Abrir conexão
     function openConSocket() {
-        conn_ws = new WebSocket(url_ws);
-        conn_ws.onopen
-        getNewMessage()
-        
-    }
+        conn_ws = new WebSocket(url_ws); 
+         
+        conn_ws.addEventListener('open',  message => {
+            //const data = JSON.parse(message)
+            console.log(message)
+        })
+
+        conn_ws.addEventListener('message', message => {
+            console.log(message)
+        })
+
+        conn_ws.addEventListener('error', message => {
+            console.log(message)
+        })
+
+        conn_ws.addEventListener('close', message => {
+            console.log(message)
+        })
+       
+
+       // conn_ws.onopen
+       //getNewMessage()
+
+    }    
 
     //Receber msg
     function getNewMessage() {
@@ -206,6 +225,11 @@
     function sendMessage(msg) {
         conn_ws.send(msg);
     }
+
+    //Fechar conexão
+    function closeConn() { 
+        conn_ws.close()
+     }
 
 
     //conn_ws.close()
