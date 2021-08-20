@@ -205,7 +205,8 @@
                 //swal("Sucesso", messages.error.msg, "success");
                 console.log(messages.error)                         
             } else {
-                swal("Atenção", message.error.msg, "warning");
+                console.log()
+                swal("Atenção", messages.error.msg, "warning");
             }
         })
 
