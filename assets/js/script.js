@@ -188,14 +188,22 @@
 
         conn_ws.addEventListener('open', open => {
             console.log("Conexão aberta!")
+            sendMessage(
+                {  
+                    "cmd": "cmd_call_msg",  //comando          
+                    "call": 1,  //id da call
+                    "text": "Olá Mundo!", //mensagem        
+                }  
+                  
+            )  
         })
 
         conn_ws.addEventListener('message', message => {
             messages = JSON.parse(message.data)           
 
             if (messages.result) {
-                swal("Sucesso", messages.error.msg, "success");
-                console.log(messages.error)               
+                //swal("Sucesso", messages.error.msg, "success");
+                console.log(messages.error)                         
             } else {
                 swal("Atenção", message.error.msg, "warning");
             }
@@ -211,12 +219,14 @@
             } else if (close.code == 1000) {
                 swal("Atenção", "Conexão encerrada!", "info");                            
             }
-        })       
+        })     
+        
+      
     }    
 
     //Enviar msg
     function sendMessage(msg) {
-        conn_ws.send(msg);
+        conn_ws.send(JSON.stringify(msg));
     }
 
     //Fechar conexão
