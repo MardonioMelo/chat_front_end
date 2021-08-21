@@ -211,12 +211,12 @@
         })
 
         conn_ws.addEventListener('error', error => {
-            swal("Opss!!", "Error na conexão com o servidor!", "error");           
+            swal("Opss!!", "Error na conexão com o servidor de chat!", "error");           
         })
 
         conn_ws.addEventListener('close', close => {
             if (close.code == 1006) {
-                swal("Opss!!", "O servidor WS está offline!", "error");
+                swal("Opss!!", "O servidor de chat está offline!", "error");
             } else if (close.code == 1000) {
                 swal("Atenção", "Conexão encerrada!", "info");                            
             }
