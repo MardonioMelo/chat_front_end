@@ -23,8 +23,7 @@
     const btn_conectar = document.getElementById('j_btn_conectar')
     const btn_logout = document.getElementById('j_btn_logout')
 
-    //Variáveis de dados
-    var token = getToken()
+    //Variáveis de dados   
     var attendant = null
     var conn_ws = null
     var messages = null
@@ -100,8 +99,6 @@
             default:
                 break;
         }
-
-        setAttendant()
     }
 
     //Botões de ação
@@ -138,38 +135,45 @@
     //Obter token
     function createToken() {
 
-        let data = new FormData();
-        data.append('uuid', my_setup.uuid);
-        data.append('type', my_setup.type);
-        data.append('public', my_setup.public);
+        if (checkExpToken()) {
 
-        //Config request
-        let config = {
-            method: 'POST',
-            url: url_token,
-            headers: {
-                'Content-Type': 'form-data',
-                'Access-Control-Allow-Origin': '*'
-            },
-            data: data,
-            mode: 'cors'
-        }
+            let data = new FormData();
+            data.append('uuid', my_setup.uuid);
+            data.append('type', my_setup.type);
+            data.append('public', my_setup.public);
 
-        //Request
-        axios(config)
-            .then(function (res) {
-                if (res.data.result) {
-                    saveDataToken(res.data.error)                  
-                    changeState('chat')                                     
-                } else {
+            //Config request
+            let config = {
+                method: 'POST',
+                url: url_token,
+                headers: {
+                    'Content-Type': 'form-data',
+                    'Access-Control-Allow-Origin': '*'
+                },
+                data: data,
+                mode: 'cors'
+            }
+
+            //Request
+            axios(config)
+                .then(function (res) {
+                    if (res.data.result) {
+                        saveDataToken(res.data.error)
+                        setAttendant(res.data.error.token)
+                        changeState('chat')
+                    } else {
+                        changeState('conectar')
+                        swal("Opss!!", res.data.error.msg, "error");
+                    }
+                })
+                .catch(function (err) {
                     changeState('conectar')
-                    swal("Opss!!", res.data.error.msg, "error");
-                }
-            })
-            .catch(function (err) {
-                changeState('conectar')
-                swal("Opss!!", "Não foi possível gerar sua autentificação, verifique sua conexão.", "error");
-            });
+                    swal("Opss!!", "Não foi possível gerar sua autentificação, verifique sua conexão.", "error");
+                });
+        } else {
+            changeState('chat')
+            setAttendant(getToken())
+        }
     }
 
     //Salvar token no session storage
@@ -178,6 +182,7 @@
             sessionStorage.setItem('token_chat', "");
         } else {
             sessionStorage.setItem('token_chat', data.token);
+
         }
     }
 
@@ -186,15 +191,19 @@
         return sessionStorage.getItem('token_chat');
     }
 
-    //Tempo atual em segundos
-    function getNowSeg() {
-        return parseInt(Date.now() / 1000)
-    }
 
-    //Tempo de expiração do token
-    function getExpTime() {
-        var [, base] = token.split(".")
-        return JSON.parse(atob(base)).exp
+    //verificar se o token expirou - true = vencido
+    function checkExpToken() {
+        let res = true
+
+        if (getToken()) {
+            let now_seg = parseInt(Date.now() / 1000)
+            var [, base] = (getToken()).split(".")
+            let exp = JSON.parse(atob(base)).exp
+            res = now_seg > exp ? true : false      
+            console.log(res)     
+        }
+        return res
     }
 
 
@@ -203,9 +212,8 @@
     //###############
 
     //Set dados do atendente
-    function setAttendant() {
-        if (!attendant) {
-   
+    async function setAttendant(token) {
+        if (token) {
 
             //Config request
             let config = {
@@ -243,11 +251,11 @@
     //Abrir conexão
     function initSocket() {
 
-        conn_ws = new WebSocket(`${url_ws}/?t=${token}`);
+        conn_ws = new WebSocket(`${url_ws}/?t=${getToken()}`);
 
         //Evento ao abrir conexão
         conn_ws.addEventListener('open', open => {
-            changeState('chat')           
+            changeState('chat')
         })
 
         //Evento ao enviar/receber mensagens
@@ -286,9 +294,9 @@
 
     //Fechar conexão
     function closeConn() {
-        if(conn_ws){
+        if (conn_ws) {
             conn_ws.close()
-        }       
+        }
     }
 
 
@@ -447,13 +455,12 @@
     //###############   
 
     function toConnect() {
-        if (token == null || token == "" || getNowSeg() > getExpTime()) {
+        if (checkExpToken()) {
             createToken()
         } else {
-            initSocket()                     
+            initSocket()
             // updateListCall()
-            // printHistory(history)   
-           
+            // printHistory(history)             
         }
     }
 
@@ -466,12 +473,14 @@
 
         let page = sessionStorage.getItem("page")
         if (page) {
-            changeState(page)            
+            changeState(page)
+            setAttendant(getToken())
         } else {
             changeState("logout")
         }
 
-        actionButtons()        
+        actionButtons()
+
     }
 
     init()
