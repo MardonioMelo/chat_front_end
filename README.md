@@ -1,7 +1,13 @@
 # Front-end para Chat de Atendimento
 Front-end de um chat para consumo da [API Chat de Atendimento](https://github.com/MardonioMelo/chat_api).
 
-Tecnologia utilizadas:
+# Instalação
+Execite o comando para instalar as dependências
+>
+    npm install
+>
+
+# Tecnologias
 - HTML5
 - JS
 - CSS
@@ -10,6 +16,7 @@ Tecnologia utilizadas:
 - Sweet Alert
 - Animate
 
+# Configuração
 
 Para configurar a integração, renomeie o arquivo <code>exemple.main.js</code> para <code>main.js</code> e edite as informações do seu conteúdo. As informações do usuário podem ser passadas de forma dinâmica conforme seu aplicativo. Por exemplo, você pode implementar dentro desse arquivo uma busca no seu sistema para obter os dados a serem informados.
 
