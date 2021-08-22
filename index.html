@@ -21,8 +21,7 @@
 
 <body class="text-white bg-dark">
 
-    <!--View Chat-->
-   
+    <!--View Chat-->   
     <main id="j_view_chat" style="display: none;">
 
         <!-- Start Navbar -->
@@ -60,13 +59,13 @@
                         id="j_attendant_img_src">
                 </a>
                 <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser3">
-                    <li><a class="dropdown-item" href="#">Configurações <span class="badge bg-danger">Off</span></a>
+                    <li><a class="dropdown-item" href="#">Configurações <span class="badge bg-danger">Em breve</span></a>
                     </li>
-                    <li><a class="dropdown-item" href="#">Perfíl <span class="badge bg-danger">Off</span></a></li>
+                    <li><a class="dropdown-item" href="#">Perfíl <span class="badge bg-danger">Em breve</span></a></li>
                     <li>
                         <hr class="dropdown-divider">
                     </li>
-                    <li><a class="dropdown-item" href="/">Sair</a></li>
+                    <li><a class="dropdown-item" id="j_btn_logout" href="javascript:void(0);">Sair</a></li>
                 </ul>
             </div>
         </div>
@@ -191,8 +190,7 @@
         </div>
         <!-- End chat -->
 
-    </main>
-    
+    </main>    
     <!--End Chat-->
 
     <!--View Conectar-->   
@@ -203,7 +201,7 @@
                 <p class="fs-5 mb-4">Não foi possível gerar sua autentificação, verifique sua conexão
                     e os dados informados.</p>
                 <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-                    <button type="button" class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold"><i
+                    <button type="button" class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold" id="j_btn_conectar"><i
                             class="bi bi-plug-fill"></i> Conectar</button>
                 </div>
             </div>
@@ -233,8 +231,7 @@
                 <p class="fs-5 mb-4">Entre para começar a atender clientes que estão loucos esperando por você na fila
                     de espera, não deixe-os esperando, clique no botão para entrar agora mesmo!</p>
                 <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-                    <button type="button" class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold"><i
-                            class="bi bi-plug-fill"></i> Entrar</button>
+                    <button type="button" class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold" id="j_btn_login"><i class="bi bi-door-open"></i> Entrar</button>
                 </div>
             </div>
         </div>

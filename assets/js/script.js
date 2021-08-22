@@ -19,6 +19,9 @@
     const view_conectar = document.getElementById('j_view_conectar')
     const spin_load = document.getElementById('j_spin_load')
     const view_logout = document.getElementById('j_logout')
+    const btn_login = document.getElementById('j_btn_login')
+    const btn_conectar = document.getElementById('j_btn_conectar')
+    const btn_logout = document.getElementById('j_btn_logout')
 
     //Variáveis de dados
     var token = getToken()
@@ -62,6 +65,71 @@
         return now.getHours() + ":" + ("0" + now.getMinutes()).slice(-2);
     }
 
+    //Roteamento e troca de estado da página
+    function changeState(page) {
+        switch (page) {
+            case 'load':
+                spin_load.style.display = 'block'
+                view_conectar.style.display = 'none'
+                view_chat.style.display = 'none'
+                view_logout.style.display = 'none'
+                sessionStorage.setItem("page", "load")
+                break;
+            case 'conectar':
+                spin_load.style.display = 'none'
+                view_conectar.style.display = 'block'
+                view_chat.style.display = 'none'
+                view_logout.style.display = 'none'
+                sessionStorage.setItem("page", "conectar")
+                break;
+            case 'chat':
+                spin_load.style.display = 'none'
+                view_conectar.style.display = 'none'
+                view_chat.style.display = 'flex'
+                view_logout.style.display = 'none'
+                sessionStorage.setItem("page", "chat")
+                break;
+            case 'logout':
+                spin_load.style.display = 'none'
+                view_conectar.style.display = 'none'
+                view_chat.style.display = 'none'
+                view_logout.style.display = 'block'
+                sessionStorage.setItem("page", "logout")
+                break;
+
+            default:
+                break;
+        }
+
+        setAttendant()
+    }
+
+    //Botões de ação
+    function actionButtons() {
+
+        item_call.forEach(function (data, index) {
+            data.addEventListener('click', activeCall, false);
+        })
+
+        btn_login.addEventListener('click', () => {
+            changeState('load')
+            toConnect()
+        })
+
+        btn_conectar.addEventListener('click', () => {
+            changeState('load')
+            toConnect()
+        })
+
+        btn_logout.addEventListener('click', () => {
+            changeState('logout')
+            closeConn()
+        })
+
+        btn_send.addEventListener("click", receiveMsg)
+        input_send.addEventListener("keypress", (e) => { e.key == 'Enter' ? sendMsg() : null })
+    }
+
 
     //###############
     //  TOKEN
@@ -87,15 +155,12 @@
             mode: 'cors'
         }
 
-        changeState('load')
-
         //Request
         axios(config)
             .then(function (res) {
                 if (res.data.result) {
-                    saveDataToken(res.data.error)
-                    changeState('chat')
-                    location = location.href
+                    saveDataToken(res.data.error)                  
+                    changeState('chat')                                     
                 } else {
                     changeState('conectar')
                     swal("Opss!!", res.data.error.msg, "error");
@@ -132,39 +197,6 @@
         return JSON.parse(atob(base)).exp
     }
 
-    //Mudar status da página
-    function changeState(page) {
-        switch (page) {
-            case 'load':
-                spin_load.style.display = 'block'
-                view_conectar.style.display = 'none'
-                view_chat.style.display = 'none'
-                view_logout.style.display = 'none'
-                break;
-            case 'conectar':
-                spin_load.style.display = 'none'
-                view_conectar.style.display = 'block'
-                view_chat.style.display = 'none'
-                view_logout.style.display = 'none'
-                break;
-            case 'chat':
-                spin_load.style.display = 'none'
-                view_conectar.style.display = 'none'
-                view_chat.style.display = 'flex'
-                view_logout.style.display = 'none'
-                break;
-            case 'logout':
-                spin_load.style.display = 'none'
-                view_conectar.style.display = 'none'
-                view_chat.style.display = 'none'
-                view_logout.style.display = 'block'
-                break;
-
-            default:
-                break;
-        }
-    }
-
 
     //###############
     //  Perfil
@@ -173,6 +205,7 @@
     //Set dados do atendente
     function setAttendant() {
         if (!attendant) {
+   
 
             //Config request
             let config = {
@@ -214,7 +247,7 @@
 
         //Evento ao abrir conexão
         conn_ws.addEventListener('open', open => {
-            console.log("Conexão ws aberta!")
+            changeState('chat')           
         })
 
         //Evento ao enviar/receber mensagens
@@ -237,11 +270,12 @@
         //Evento ao fechar conexão
         conn_ws.addEventListener('close', close => {
             if (close.code == 1006) {
+                changeState('conectar')
                 swal("Opss!!", "O servidor de chat está offline!", "error");
             } else if (close.code == 1000) {
-                swal("Atenção", "Conexão encerrada!", "info");
+                changeState('logout')
+                swal("Atenção", `Conexão encerrada: ${messages.error.msg}`, "info");
             }
-            changeState('conectar')
         })
     }
 
@@ -252,8 +286,9 @@
 
     //Fechar conexão
     function closeConn() {
-        conn_ws.close()
-        changeState('logout')
+        if(conn_ws){
+            conn_ws.close()
+        }       
     }
 
 
@@ -408,30 +443,35 @@
 
 
     //###############
+    //  Conectar
+    //###############   
+
+    function toConnect() {
+        if (token == null || token == "" || getNowSeg() > getExpTime()) {
+            createToken()
+        } else {
+            initSocket()                     
+            // updateListCall()
+            // printHistory(history)   
+           
+        }
+    }
+
+
+    //###############
     //  INICIAR
     //###############   
 
     function init() {
-      
-        if (token == null || token == "" || getNowSeg() > getExpTime()) {
-           // createToken()
+
+        let page = sessionStorage.getItem("page")
+        if (page) {
+            changeState(page)            
         } else {
-
-            changeState('chat')
-           
-           // initSocket()
-            btn_send.addEventListener("click", receiveMsg)
-            input_send.addEventListener("keypress", (e) => { e.key == 'Enter' ? sendMsg() : null })
-           // setAttendant()
-           // updateListCall()
-
-            // printHistory(history)    
-
-
-            item_call.forEach(function (data, index) {
-                data.addEventListener('click', activeCall, false);
-            })
+            changeState("logout")
         }
+
+        actionButtons()        
     }
 
     init()
