@@ -166,12 +166,12 @@
                         changeState('chat')
                     } else {
                         changeState('conectar')
-                        swal("Opss!!", res.data.error.msg, "error");
+                        swal.fire("Opss!!", res.data.error.msg, "error");
                     }
                 })
                 .catch(function (err) {
                     changeState('conectar')
-                    swal("Opss!!", "Não foi possível gerar sua autentificação, verifique sua conexão.", "error");
+                    swal.fire("Opss!!", "Não foi possível gerar sua autentificação, verifique sua conexão.", "error");
                 });
         } else {
             changeState('chat')
@@ -233,11 +233,11 @@
                     if (res.data.result) {
                         setUser(res.data.error.data)
                     } else {
-                        swal("Opss!!", res.data.error.msg, "error");
+                        swal.fire("Opss!!", res.data.error.msg, "error");
                     }
                 })
                 .catch(function (err) {
-                    swal("Opss!!", "Erro na conexão.", "error");
+                    swal.fire("Opss!!", "Erro na conexão.", "error");
                 });
         }
     }
@@ -282,25 +282,29 @@
 
             if (messages.result) {
                 console.log(messages.error)
+                console.log(messages.error.data.cmd)
+                //  messages.error.data.cmd()               
+                notifyInfo(messages.error.msg)
             } else {
-                swal("Atenção", messages.error.msg, "warning");
+                notifyInfo(messages.error.msg)
             }
         })
 
         //Evento de error
         conn_ws.addEventListener('error', error => {
-            swal("Opss!!", "Error na conexão com o servidor de chat!", "error");
+            notifyError(`Error na conexão com o servidor de chat!`)
             changeState('conectar')
         })
 
         //Evento ao fechar conexão
         conn_ws.addEventListener('close', close => {
+
             if (close.code == 1006) {
                 changeState('conectar')
-                swal("Opss!!", "O servidor de chat está offline!", "error");
+                notifyOffline(`O servidor de chat está offline!`)
             } else if (close.code == 1000) {
                 changeState('logout')
-                swal("Atenção", `Conexão encerrada: ${messages.error.msg}`, "info");
+                notifyInfo(`Conexão encerrada: ${messages.error.msg}`)
             }
         })
     }
@@ -315,6 +319,10 @@
         if (conn_ws) {
             conn_ws.close()
         }
+    }
+
+    function cmd_conection() {
+
     }
 
 
@@ -349,7 +357,7 @@
     }
 
     //Consultar e atualizar listar de espera
-    function updateListCall() {
+    function cmd_call_data_clients() {
 
         if (calls) {
             Object.values(calls.error.data.clients).forEach(function (data) {
@@ -457,12 +465,12 @@
                         attendant = res.data.error.data
                         attendant_img_src.src = attendant.avatar
                     } else {
-                        swal("Opss!!", res.data.error.msg, "error");
+                        swal.fire("Opss!!", res.data.error.msg, "error");
                     }
                 })
                 .catch(function (err) {
                     console.log(err)
-                    swal("Opss!!", "Erro na conexão.", "error");
+                    swal.fire("Opss!!", "Erro na conexão.", "error");
                 });
         }
     }
@@ -477,7 +485,7 @@
             createToken()
         } else {
             initSocket()
-            // updateListCall()
+            cmd_call_data_clients()
             // printHistory(history)             
         }
     }
@@ -499,7 +507,11 @@
 
         actionButtons()
 
-        console.log(attendant)
+
+
+
+
+
     }
 
     init()

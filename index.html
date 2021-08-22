@@ -8,37 +8,40 @@
     <meta name="author" content="GR8 Sistemas">
     <title>Chat de Atendimento</title>
     <!-- Bootstrap core CSS -->
-    <link href="assets/css/bootstrap-5.1.0.min.css" rel="stylesheet">
+    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Icons -->
-    <link href="assets/css/bootstrap-icons-1.5.0/bootstrap-icons.css" rel="stylesheet">
+    <link href="node_modules/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <!-- Animate -->
-    <link href="assets/css/animate-4.4.1.min.css" rel="stylesheet" />
+    <link href="node_modules/animate.css/animate.min.css" rel="stylesheet" />
+    <!-- Toast -->
+    <link href="node_modules/node-snackbar/dist/snackbar.min.css" rel="stylesheet" />    
     <!-- Custom styles -->
-    <link href="assets/css/style.css" rel="stylesheet" />
+    <link href="assets/css/style.css" rel="stylesheet" />    
     <!--Setup-->
     <script src="main.js"></script>
 </head>
 
 <body class="text-white bg-dark">
 
-    <!--View Chat-->   
+    <!--View Chat-->
     <main id="j_view_chat" style="display: none;">
 
         <!-- Start Navbar -->
         <div class="d-flex flex-column flex-shrink-0 bg-navbar">
-            <a href="/" class="d-block p-3 text-center" title="Home" data-bs-toggle="tooltip"
-                data-bs-placement="right">
+            <a href="/" class="d-block p-3 text-center" title="Home" data-bs-toggle="tooltip" data-bs-placement="right">
                 <i class="bi bi-house icon-home"></i>
                 <span class="visually-hidden">Home</span>
             </a>
             <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
                 <li class="nav-item">
-                    <a href="#" class="nav-link active py-3" aria-current="page" title="Chat"
-                        data-bs-toggle="tooltip" data-bs-placement="right">
+                    <a href="#" class="nav-link active py-3" aria-current="page" title="Chat" data-bs-toggle="tooltip"
+                        data-bs-placement="right">
                         <i class="bi bi-chat-left-text-fill icon-navbar"></i>
                     </a>
                 </li>
-                <li>
+
+
+                <!-- <li>
                     <a href="#" class="nav-link py-3" title="Histórico" data-bs-toggle="tooltip"
                         data-bs-placement="right">
                         <i class="bi bi-clock-history icon-navbar"></i>
@@ -49,17 +52,19 @@
                         data-bs-placement="right">
                         <i class="bi bi-person-circle icon-navbar"></i>
                     </a>
-                </li>
+                </li> -->
             </ul>
             <div class="dropdown">
                 <a href="#"
                     class="d-flex align-items-center justify-content-center p-3 link-secondary text-decoration-none dropdown-toggle"
                     id="dropdownUser3" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="./assets/img/user.png" alt="user" width="24" height="24" class="rounded-circle j_perfil_img">
+                    <img src="./assets/img/user.png" alt="user" width="24" height="24"
+                        class="rounded-circle j_perfil_img">
                 </a>
-                <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser3">
-                    <li><span class="dropdown-item disabled j_perfil_name"></span></li>
-                    <li><a class="dropdown-item" href="#">Configurações <span class="badge bg-danger">Em breve</span></a>
+                <ul class="dropdown-menu dropdown-menu-dark text-small" aria-labelledby="dropdownUser3">
+                    <li class="p-2 mb-2 bg-dark border-bottom border-dark j_perfil_name"></li>
+                    <li><a class="dropdown-item" href="#">Configurações <span class="badge bg-danger">Em
+                                breve</span></a>
                     </li>
                     <li><a class="dropdown-item" href="#">Perfíl <span class="badge bg-danger">Em breve</span></a></li>
                     <li>
@@ -94,7 +99,7 @@
                     </div>
                     <small class="opacity-50 text-nowrap">10:20</small>
                 </div>
-            </a> -->
+                </a> -->
 
             </div>
         </div>
@@ -172,16 +177,15 @@
 
             <!-- Botão para iniciar atendimento -->
             <!-- <div class="mt-auto text-white-50 py-3 bg-gradient rounded-top">
-            <div class="d-grid gap-2 col-6 mx-auto">                                    
-                <button class="btn btn-success btn-lg" type="button"><i class="bi bi-skip-start-fill"></i> Iniciar Atendimento</button>
-            </div>                
-        </div> -->
+                <div class="d-grid gap-2 col-6 mx-auto">                                    
+                    <button class="btn btn-success btn-lg" type="button"><i class="bi bi-skip-start-fill"></i> Iniciar Atendimento</button>
+                </div>                
+            </div> -->
 
             <!-- Input de Mensagens -->
             <div class="mt-auto text-white-50 py-3 d-none">
                 <div class="input-group ">
-                    <input type="text" class="form-control bg-input-chat" placeholder="Mensagem..."
-                        id="j_input_send">
+                    <input type="text" class="form-control bg-input-chat" placeholder="Mensagem..." id="j_input_send">
                     <button class="btn btn-outline-secondary" id="j_btn_send">
                         <i class="bi bi-telegram" style="font-size: 1.8rem;"></i>
                     </button>
@@ -190,10 +194,10 @@
         </div>
         <!-- End chat -->
 
-    </main>    
+    </main>
     <!--End Chat-->
 
-    <!--View Conectar-->   
+    <!--View Conectar-->
     <div class="bg-dark text-secondary px-4 py-5 text-center" id="j_view_conectar" style="display: none;">
         <div class="py-5">
             <h1 class="display-5 fw-bold text-white"><i class="bi bi-emoji-frown"></i></h1>
@@ -201,8 +205,8 @@
                 <p class="fs-5 mb-4">Não foi possível gerar sua autentificação, verifique sua conexão
                     e os dados informados.</p>
                 <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-                    <button type="button" class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold" id="j_btn_conectar"><i
-                            class="bi bi-plug-fill"></i> Conectar</button>
+                    <button type="button" class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold"
+                        id="j_btn_conectar"><i class="bi bi-plug-fill"></i> Conectar</button>
                 </div>
             </div>
         </div>
@@ -231,7 +235,8 @@
                 <p class="fs-5 mb-4">Entre para começar a atender clientes que estão loucos esperando por você na fila
                     de espera, não deixe-os esperando, clique no botão para entrar agora mesmo!</p>
                 <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-                    <button type="button" class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold" id="j_btn_login"><i class="bi bi-door-open"></i> Entrar</button>
+                    <button type="button" class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold" id="j_btn_login"><i
+                            class="bi bi-door-open"></i> Entrar</button>
                 </div>
             </div>
         </div>
@@ -239,9 +244,11 @@
     <!--end Logout/Login-->
 
     <!-- Scripts -->
-    <script src="assets/js/bootstrap.bundle-5.1.0.min.js"></script>
-    <script src="assets/js/axios.min.js"></script>
-    <script src="assets/js/sweetalert-2.1.2.min.js"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="node_modules/axios/dist/axios.min.js"></script>
+    <script src="node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>  
+    <script src="node_modules/node-snackbar/dist/snackbar.min.js"></script>   
+    <script src="assets/js/snackbar.config.js"></script>
     <script src="assets/js/script.js"></script>
 </body>
 
