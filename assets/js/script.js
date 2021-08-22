@@ -8,13 +8,7 @@
     const url_token = `${my_setup.host_http}/token`
     const url_perfil = `${my_setup.host_http}/attendant/perfil`
     const url_ws = `${my_setup.host_ws}`
-    //Variáveis do DOM      
-    const btn_send = document.getElementById('j_btn_send')
-    const input_send = document.getElementById('j_input_send')
-    const print_msg = document.getElementById('j_print_msg')
-    const print_calls = document.getElementById('j_print_calls')
-    const attendant_img_src = document.getElementById('j_attendant_img_src')
-    const client_img_src = document.getElementById('j_client_img_src')
+    //Variáveis do DOM   
     const view_chat = document.getElementById('j_view_chat')
     const view_conectar = document.getElementById('j_view_conectar')
     const spin_load = document.getElementById('j_spin_load')
@@ -22,6 +16,15 @@
     const btn_login = document.getElementById('j_btn_login')
     const btn_conectar = document.getElementById('j_btn_conectar')
     const btn_logout = document.getElementById('j_btn_logout')
+    //Variáveis do Perfil
+    const perfil_img = document.querySelectorAll('.j_perfil_img')
+    const perfil_name = document.querySelectorAll('.j_perfil_name')
+    //Outras Variáveis
+    const btn_send = document.getElementById('j_btn_send')
+    const input_send = document.getElementById('j_input_send')
+    const print_msg = document.getElementById('j_print_msg')
+    const print_calls = document.getElementById('j_print_calls')
+    const client_img_src = document.getElementById('j_client_img_src')
 
     //Variáveis de dados   
     var attendant = null
@@ -104,27 +107,27 @@
     //Botões de ação
     function actionButtons() {
 
-        item_call.forEach(function (data, index) {
+        item_call.forEach(function (data) {
             data.addEventListener('click', activeCall, false);
         })
 
-        btn_login.addEventListener('click', () => {
+        btn_login.onclick = () => {
             changeState('load')
             toConnect()
-        })
+        }
 
-        btn_conectar.addEventListener('click', () => {
+        btn_conectar.onclick = () => {
             changeState('load')
             toConnect()
-        })
+        }
 
-        btn_logout.addEventListener('click', () => {
+        btn_logout.onclick = () => {
             changeState('logout')
             closeConn()
-        })
+        }
 
-        btn_send.addEventListener("click", receiveMsg)
-        input_send.addEventListener("keypress", (e) => { e.key == 'Enter' ? sendMsg() : null })
+        btn_send.onclick = () => receiveMsg
+        input_send.onkeypress = (e) => { e.key == 'Enter' ? sendMsg() : null }
     }
 
 
@@ -159,7 +162,7 @@
                 .then(function (res) {
                     if (res.data.result) {
                         saveDataToken(res.data.error)
-                        setAttendant(res.data.error.token)
+                        requestPerfil(res.data.error.token)
                         changeState('chat')
                     } else {
                         changeState('conectar')
@@ -172,7 +175,7 @@
                 });
         } else {
             changeState('chat')
-            setAttendant(getToken())
+            requestPerfil(getToken())
         }
     }
 
@@ -182,7 +185,6 @@
             sessionStorage.setItem('token_chat', "");
         } else {
             sessionStorage.setItem('token_chat', data.token);
-
         }
     }
 
@@ -191,17 +193,15 @@
         return sessionStorage.getItem('token_chat');
     }
 
-
     //verificar se o token expirou - true = vencido
     function checkExpToken() {
         let res = true
 
         if (getToken()) {
             let now_seg = parseInt(Date.now() / 1000)
-            var [, base] = (getToken()).split(".")
+            let [, base] = (getToken()).split(".")
             let exp = JSON.parse(atob(base)).exp
-            res = now_seg > exp ? true : false      
-            console.log(res)     
+            res = now_seg > exp ? true : false
         }
         return res
     }
@@ -211,8 +211,8 @@
     //  Perfil
     //###############
 
-    //Set dados do atendente
-    async function setAttendant(token) {
+    //Set dados do user
+    function requestPerfil(token) {
         if (token) {
 
             //Config request
@@ -231,8 +231,7 @@
             axios(config)
                 .then(function (res) {
                     if (res.data.result) {
-                        attendant = res.data.error.data
-                        attendant_img_src.src = attendant.avatar
+                        setUser(res.data.error.data)
                     } else {
                         swal("Opss!!", res.data.error.msg, "error");
                     }
@@ -241,6 +240,25 @@
                     swal("Opss!!", "Erro na conexão.", "error");
                 });
         }
+    }
+
+    //Incluir dados do user na sessão
+    function setUser(data) {
+        sessionStorage.setItem("user", JSON.stringify(data))
+        attendant = data
+
+        perfil_img.forEach(function (data) {
+            data.src = attendant.avatar
+        })
+
+        perfil_name.forEach(function (data) {
+            data.innerHTML = attendant.name
+        })
+    }
+
+    //Obter dados do user da sessão
+    function getUser(data) {
+        return JSON.parse(sessionStorage.setItem("user"))
     }
 
 
@@ -474,13 +492,14 @@
         let page = sessionStorage.getItem("page")
         if (page) {
             changeState(page)
-            setAttendant(getToken())
+            requestPerfil(getToken())
         } else {
             changeState("logout")
         }
 
         actionButtons()
 
+        console.log(attendant)
     }
 
     init()
