@@ -19,21 +19,23 @@
     <script src="main.js"></script>
 </head>
 
-<body class="text-white bg-secondary">
+<body class="text-white bg-dark">
 
     <!--View Chat-->
+   
     <main id="j_view_chat" style="display: none;">
 
         <!-- Start Navbar -->
         <div class="d-flex flex-column flex-shrink-0 bg-navbar">
-            <a href="/" class="d-block p-3 text-center" title="Home" data-bs-toggle="tooltip" data-bs-placement="right">
+            <a href="/" class="d-block p-3 text-center" title="Home" data-bs-toggle="tooltip"
+                data-bs-placement="right">
                 <i class="bi bi-house icon-home"></i>
                 <span class="visually-hidden">Home</span>
             </a>
             <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
                 <li class="nav-item">
-                    <a href="#" class="nav-link active py-3" aria-current="page" title="Chat" data-bs-toggle="tooltip"
-                        data-bs-placement="right">
+                    <a href="#" class="nav-link active py-3" aria-current="page" title="Chat"
+                        data-bs-toggle="tooltip" data-bs-placement="right">
                         <i class="bi bi-chat-left-text-fill icon-navbar"></i>
                     </a>
                 </li>
@@ -54,7 +56,8 @@
                 <a href="#"
                     class="d-flex align-items-center justify-content-center p-3 link-secondary text-decoration-none dropdown-toggle"
                     id="dropdownUser3" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="" alt="usuário" width="24" height="24" class="rounded-circle" id="j_attendant_img_src">
+                    <img src="" alt="usuário" width="24" height="24" class="rounded-circle"
+                        id="j_attendant_img_src">
                 </a>
                 <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser3">
                     <li><a class="dropdown-item" href="#">Configurações <span class="badge bg-danger">Off</span></a>
@@ -80,19 +83,19 @@
             <div class="list-group list-group-checkable scrollarea shadow" id="j_print_calls">
 
                 <!-- <a href="#" class="list-group-item d-flex gap-3 py-3 m-1 rounded shadow-sm j_item_call"
-                    aria-current="true">
-                    <span
-                        class="position-absolute top-50 start-75 translate-middle p-1 bg-success border border-light rounded-circle">
-                    </span>
-                    <img src="./img/monkey.jpg" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">
-                    <div class="d-flex gap-2 w-100 justify-content-between">
-                        <div>
-                            <h6 class="mb-0 fw-bold">Nome do usuário </h6>
-                            <p class="mb-0 opacity-75">Olá, quem ver um boleto !</p>
-                        </div>
-                        <small class="opacity-50 text-nowrap">10:20</small>
+                aria-current="true">
+                <span
+                    class="position-absolute top-50 start-75 translate-middle p-1 bg-success border border-light rounded-circle">
+                </span>
+                <img src="./img/monkey.jpg" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">
+                <div class="d-flex gap-2 w-100 justify-content-between">
+                    <div>
+                        <h6 class="mb-0 fw-bold">Nome do usuário </h6>
+                        <p class="mb-0 opacity-75">Olá, quem ver um boleto !</p>
                     </div>
-                </a> -->
+                    <small class="opacity-50 text-nowrap">10:20</small>
+                </div>
+            </a> -->
 
             </div>
         </div>
@@ -124,61 +127,62 @@
             </div>
 
             <div class="list-group list-group-flush scrollarea" id="j_print_msg">
-               
+
                 <div class="card bg-dark gap-3 py-3 p-2 m-5">
                     <div class="card-body text-center">
-                      <h2><i class="bi bi-arrow-left"></i> Clique em um cliente da lista.</h2>                    
+                        <h2><i class="bi bi-arrow-left"></i> Clique em um cliente da lista.</h2>
                     </div>
                 </div>
 
                 <!-- Cliente -->
                 <!-- <div class="list-group-item list-group-item d-flex gap-3 py-3 p-3 w-75 m-2 shadow msg-right">
-                    <img src="./img/monkey.jpg" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">
-                    <div class="d-flex gap-2 w-100 justify-content-between">
-                        <div>
-                            <h6 class="mb-0 fw-bold">Nome do Cliente </h6>
-                            <p class="mb-0 opacity-75">Olá, quem ver um boleto !</p>
-                        </div>
-                        <small class="opacity-50 text-nowrap">10:20</small>
+                <img src="./img/monkey.jpg" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">
+                <div class="d-flex gap-2 w-100 justify-content-between">
+                    <div>
+                        <h6 class="mb-0 fw-bold">Nome do Cliente </h6>
+                        <p class="mb-0 opacity-75">Olá, quem ver um boleto !</p>
                     </div>
-                </div> -->
+                    <small class="opacity-50 text-nowrap">10:20</small>
+                </div>
+            </div> -->
                 <!-- Atendente -->
 
                 <!-- <div class="list-group-item list-group-item d-flex gap-3 py-3 p-3 w-75 m-2 shadow align-self-end msg-left">
-                    <div class="d-flex gap-2 w-100 justify-content-between">
-                        <div>
-                            <h6 class="mb-0 fw-bold">Nome do Atendente </h6>
-                            <p class="mb-0 opacity-75">Olá, quem ver um boleto !</p>
-                        </div>
-                        <small class="opacity-50 text-nowrap">10:20</small>
+                <div class="d-flex gap-2 w-100 justify-content-between">
+                    <div>
+                        <h6 class="mb-0 fw-bold">Nome do Atendente </h6>
+                        <p class="mb-0 opacity-75">Olá, quem ver um boleto !</p>
                     </div>
-                </div> -->
+                    <small class="opacity-50 text-nowrap">10:20</small>
+                </div>
+            </div> -->
 
                 <!--Alerta de Sucesso-->
                 <!-- <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <strong><i class="bi bi-check2-circle"></i> Sucesso </strong> ao finalizar o atendimento!
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div> -->
+                <strong><i class="bi bi-check2-circle"></i> Sucesso </strong> ao finalizar o atendimento!
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div> -->
 
                 <!--Alerta de Erro-->
                 <!-- <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <strong><i class="bi bi-check2-circle"></i> Opss! </strong> Não foi possível finalizar o
-                    atendimento!
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div> -->
+                <strong><i class="bi bi-check2-circle"></i> Opss! </strong> Não foi possível finalizar o
+                atendimento!
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div> -->
             </div>
 
             <!-- Botão para iniciar atendimento -->
             <!-- <div class="mt-auto text-white-50 py-3 bg-gradient rounded-top">
-                <div class="d-grid gap-2 col-6 mx-auto">                                    
-                    <button class="btn btn-success btn-lg" type="button"><i class="bi bi-skip-start-fill"></i> Iniciar Atendimento</button>
-                </div>                
-            </div> -->
+            <div class="d-grid gap-2 col-6 mx-auto">                                    
+                <button class="btn btn-success btn-lg" type="button"><i class="bi bi-skip-start-fill"></i> Iniciar Atendimento</button>
+            </div>                
+        </div> -->
 
             <!-- Input de Mensagens -->
             <div class="mt-auto text-white-50 py-3 d-none">
                 <div class="input-group ">
-                    <input type="text" class="form-control bg-input-chat" placeholder="Mensagem..." id="j_input_send">
+                    <input type="text" class="form-control bg-input-chat" placeholder="Mensagem..."
+                        id="j_input_send">
                     <button class="btn btn-outline-secondary" id="j_btn_send">
                         <i class="bi bi-telegram" style="font-size: 1.8rem;"></i>
                     </button>
@@ -188,19 +192,19 @@
         <!-- End chat -->
 
     </main>
+    
     <!--End Chat-->
 
-    <!--View Conectar-->
-    <div class="container" id="j_view_conectar" style="display: block;">
-        <div class="row justify-content-md-center">
-            <div class="col-md-auto">
-                <div class="card text-center py-5 p-3 m-5 bg-dark" >
-                    <div class="card-body">
-                        <h3 class="card-title"><i class="bi bi-emoji-frown"></i> Opss!!!</h3>
-                        <p class="card-text">Não foi possível gerar sua autentificação, verifique sua conexão
-                            e os dados informados.</p>
-                        <a href="/" class="btn btn-outline-light btn-lg"><i class="bi bi-plug-fill"></i> Conectar</a>
-                    </div>
+    <!--View Conectar-->   
+    <div class="bg-dark text-secondary px-4 py-5 text-center" id="j_view_conectar" style="display: none;">
+        <div class="py-5">
+            <h1 class="display-5 fw-bold text-white"><i class="bi bi-emoji-frown"></i></h1>
+            <div class="col-lg-6 mx-auto">
+                <p class="fs-5 mb-4">Não foi possível gerar sua autentificação, verifique sua conexão
+                    e os dados informados.</p>
+                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                    <button type="button" class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold"><i
+                            class="bi bi-plug-fill"></i> Conectar</button>
                 </div>
             </div>
         </div>
@@ -208,19 +212,34 @@
     <!--End Conectar-->
 
     <!--Start spinner -->
-    <div class="container" id="j_spin_load" style="display: none;">
-        <div class="row justify-content-md-center">
-            <div class="col-md-auto">
-                <div class="card text-center py-5 p-5 m-5 bg-dark">
-                    <div class="card-body">
-                        <img src="assets/img/carregando.gif" width="100" class="img-fluid " alt="">
-                        <h3 class="card-text">Aguarde enquanto validamos sua autentificação...</h3>
-                    </div>
+    <div class="bg-dark text-secondary px-4 py-5 text-center" id="j_spin_load" style="display: none;">
+        <div class="py-5">
+            <h1 class="display-5 fw-bold text-white">Aguarde</h1>
+            <div class="col-lg-6 mx-auto">
+                <p class="fs-5 mb-4">Aguarde enquanto validamos sua autentificação...</p>
+                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                    <img src="assets/img/carregando.gif" width="100" class="img-fluid " alt="">
                 </div>
             </div>
         </div>
     </div>
     <!--End spinner -->
+
+    <!--Start Logout/Login-->
+    <div class="bg-dark text-secondary px-4 py-5 text-center" id="j_logout" style="display: none;">
+        <div class="py-5">
+            <h1 class="display-5 fw-bold text-white">Atendimento ao Cliente</h1>
+            <div class="col-lg-6 mx-auto">
+                <p class="fs-5 mb-4">Entre para começar a atender clientes que estão loucos esperando por você na fila
+                    de espera, não deixe-os esperando, clique no botão para entrar agora mesmo!</p>
+                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                    <button type="button" class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold"><i
+                            class="bi bi-plug-fill"></i> Entrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end Logout/Login-->
 
     <!-- Scripts -->
     <script src="assets/js/bootstrap.bundle-5.1.0.min.js"></script>

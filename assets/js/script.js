@@ -18,6 +18,7 @@
     const view_chat = document.getElementById('j_view_chat')
     const view_conectar = document.getElementById('j_view_conectar')
     const spin_load = document.getElementById('j_spin_load')
+    const view_logout = document.getElementById('j_logout')
 
     //Variáveis de dados
     var token = getToken()
@@ -86,22 +87,22 @@
             mode: 'cors'
         }
 
-        changeState('block', 'none', 'none')
+        changeState('load')
 
         //Request
         axios(config)
             .then(function (res) {
                 if (res.data.result) {
                     saveDataToken(res.data.error)
-                    changeState('none', 'none', 'block')
+                    changeState('chat')
                     location = location.href
                 } else {
-                    changeState('none', 'block', 'none')
+                    changeState('conectar')
                     swal("Opss!!", res.data.error.msg, "error");
                 }
             })
             .catch(function (err) {
-                changeState('none', 'block', 'none')
+                changeState('conectar')
                 swal("Opss!!", "Não foi possível gerar sua autentificação, verifique sua conexão.", "error");
             });
     }
@@ -132,10 +133,36 @@
     }
 
     //Mudar status da página
-    function changeState(a, b, c) {
-        spin_load.style.display = a
-        view_conectar.style.display = b
-        view_chat.style.display = c
+    function changeState(page) {
+        switch (page) {
+            case 'load':
+                spin_load.style.display = 'block'
+                view_conectar.style.display = 'none'
+                view_chat.style.display = 'none'
+                view_logout.style.display = 'none'
+                break;
+            case 'conectar':
+                spin_load.style.display = 'none'
+                view_conectar.style.display = 'block'
+                view_chat.style.display = 'none'
+                view_logout.style.display = 'none'
+                break;
+            case 'chat':
+                spin_load.style.display = 'none'
+                view_conectar.style.display = 'none'
+                view_chat.style.display = 'flex'
+                view_logout.style.display = 'none'
+                break;
+            case 'logout':
+                spin_load.style.display = 'none'
+                view_conectar.style.display = 'none'
+                view_chat.style.display = 'none'
+                view_logout.style.display = 'block'
+                break;
+
+            default:
+                break;
+        }
     }
 
 
@@ -183,47 +210,40 @@
     //Abrir conexão
     function initSocket() {
 
-        //Informe o token na url
         conn_ws = new WebSocket(`${url_ws}/?t=${token}`);
 
+        //Evento ao abrir conexão
         conn_ws.addEventListener('open', open => {
-            console.log("Conexão aberta!")
-            sendMessage(
-                {  
-                    "cmd": "cmd_call_msg",  //comando          
-                    "call": 1,  //id da call
-                    "text": "Olá Mundo!", //mensagem        
-                }  
-                  
-            )  
+            console.log("Conexão ws aberta!")
         })
 
+        //Evento ao enviar/receber mensagens
         conn_ws.addEventListener('message', message => {
-            messages = JSON.parse(message.data)           
+            messages = JSON.parse(message.data)
 
             if (messages.result) {
-                //swal("Sucesso", messages.error.msg, "success");
-                console.log(messages.error)                         
+                console.log(messages.error)
             } else {
-                console.log()
                 swal("Atenção", messages.error.msg, "warning");
             }
         })
 
+        //Evento de error
         conn_ws.addEventListener('error', error => {
-            swal("Opss!!", "Error na conexão com o servidor de chat!", "error");           
+            swal("Opss!!", "Error na conexão com o servidor de chat!", "error");
+            changeState('conectar')
         })
 
+        //Evento ao fechar conexão
         conn_ws.addEventListener('close', close => {
             if (close.code == 1006) {
                 swal("Opss!!", "O servidor de chat está offline!", "error");
             } else if (close.code == 1000) {
-                swal("Atenção", "Conexão encerrada!", "info");                            
+                swal("Atenção", "Conexão encerrada!", "info");
             }
-        })     
-        
-      
-    }    
+            changeState('conectar')
+        })
+    }
 
     //Enviar msg
     function sendMessage(msg) {
@@ -233,8 +253,9 @@
     //Fechar conexão
     function closeConn() {
         conn_ws.close()
+        changeState('logout')
     }
-    
+
 
     //###############
     //  CALL
@@ -391,16 +412,18 @@
     //###############   
 
     function init() {
-
+      
         if (token == null || token == "" || getNowSeg() > getExpTime()) {
-            createToken()
+           // createToken()
         } else {
-            changeState('none', 'none', '')
-            initSocket()
+
+            changeState('chat')
+           
+           // initSocket()
             btn_send.addEventListener("click", receiveMsg)
             input_send.addEventListener("keypress", (e) => { e.key == 'Enter' ? sendMsg() : null })
-            setAttendant()
-            updateListCall()
+           // setAttendant()
+           // updateListCall()
 
             // printHistory(history)    
 
