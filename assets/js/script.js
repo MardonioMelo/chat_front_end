@@ -489,8 +489,8 @@
             "call": div_input_msg.dataset.call,
             "text": input_send.value
         })
-
         printMsgAttendant(attendant.name, input_send.value)
+        input_send.value = ''
         addScroll()
     }
 
