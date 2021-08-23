@@ -34,6 +34,12 @@
     var client = null
     var calls = null
 
+    //Comandos
+    const cmd = {
+        cmd_connection: cmdConnection,
+        cmd_call_data_clients: cmdCallDataClients
+    }
+
     /* global bootstrap: false */
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
     tooltipTriggerList.forEach(function (tooltipTriggerEl) {
@@ -274,6 +280,9 @@
         //Evento ao abrir conexão
         conn_ws.addEventListener('open', open => {
             changeState('chat')
+            sendMessage({
+                "cmd": "cmd_call_data_clients"
+            })
         })
 
         //Evento ao enviar/receber mensagens
@@ -282,8 +291,8 @@
 
             if (messages.result) {
                 console.log(messages.error)
-                console.log(messages.error.data.cmd)
-                //  messages.error.data.cmd()               
+                cmd[messages.error.data.cmd](messages.error.data)
+                //verificar os comandos vindo do servdior para executar as funções            
                 notifyInfo(messages.error.msg)
             } else {
                 notifyInfo(messages.error.msg)
@@ -321,8 +330,8 @@
         }
     }
 
-    function cmd_conection() {
-
+    function cmdConnection() {
+        console.log("Conectado")
     }
 
 
@@ -357,16 +366,14 @@
     }
 
     //Consultar e atualizar listar de espera
-    function cmd_call_data_clients() {
+    function cmdCallDataClients(calls) {
 
         if (calls) {
-            Object.values(calls.error.data.clients).forEach(function (data) {
+            Object.values(calls.clients).forEach(function (data) {
                 printCall(data.call.call_id, data.user.uuid, data.user.name, data.call.call_objective, data.user.avatar, formatHora(data.call.call_update))
             });
             getPrintCall()
-        } else {
-            console.log(calls)
-        }
+        } 
     }
 
 
@@ -485,7 +492,7 @@
             createToken()
         } else {
             initSocket()
-            cmd_call_data_clients()
+
             // printHistory(history)             
         }
     }
