@@ -16,6 +16,10 @@
     const btn_login = document.getElementById('j_btn_login')
     const btn_conectar = document.getElementById('j_btn_conectar')
     const btn_logout = document.getElementById('j_btn_logout')
+    const div_start_call = document.getElementById('j_div_start_call')
+    const div_input_msg = document.getElementById('j_div_input_msg')
+    const div_header_chat = document.getElementById('j_div_header_chat')
+    const div_status_client = document.getElementById('j_div_status_client')    
     //Variáveis do Perfil
     const perfil_img = document.querySelectorAll('.j_perfil_img')
     const perfil_name = document.querySelectorAll('.j_perfil_name')
@@ -31,13 +35,15 @@
     var conn_ws = null
     var messages = null
     var item_call = []
+    var data_calls = null
     var client = null
-    var calls = null
 
     //Comandos
     const cmd = {
         cmd_connection: cmdConnection,
-        cmd_call_data_clients: cmdCallDataClients
+        cmd_call_data_clients: cmdCallDataClients,
+        cmd_call_history: cmdCallHistory,
+        cmd_check_user_on: cmdCheckUserOn
     }
 
     /* global bootstrap: false */
@@ -128,7 +134,7 @@
             closeConn()
         }
 
-        btn_send.onclick = () => receiveMsg
+        btn_send.onclick = () => sendMsg()
         input_send.onkeypress = (e) => { e.key == 'Enter' ? sendMsg() : null }
     }
 
@@ -355,10 +361,10 @@
 
     //Html da msg do cliente
     function printCall(call, uuid, name, text, img, time, newmsg = false) {
-        img = img ? img : "./assets/img/monkey.jpg"
-        let html = `<a href="#" class="list-group-item d-flex gap-3 py-3 m-1 rounded shadow-sm j_item_call" data-call="${call}" data-uuid="${uuid}" aria-current="true">
-                        ${newmsg ? '<span class="position-absolute top-50 start-75 translate-middle p-1 bg-primary border border-light rounded-circle"></span>' : ''}
-                        <img src="${img}" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">                        
+        img = img ? img : "./assets/img/user.png"
+        let html = `<a href="#" class="list-group-item d-flex gap-3 py-3 m-1 rounded shadow-sm j_item_call animate__animated animate__bounceInDown" data-call="${call}" data-uuid="${uuid}" aria-current="true">
+                        ${newmsg ? '<span class="position-absolute top-50 start-75 translate-middle p-1 bg-primary border border-white rounded-circle"></span>' : ''}
+                        <img src="${img}" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0 border border-2 border-white">                        
                         <div class="d-flex gap-2 w-100 justify-content-between position-relative">                            
                             <div>
                                 <h6 class="mb-0 fw-bold">${name}</h6>
@@ -384,7 +390,21 @@
             item_call.forEach(function (data) {
                 data.addEventListener('click', activeCall, false);
             })
+
+            data_calls = calls.clients
+        } else {
+            data_calls = null
         }
+    }
+
+    //Texto informativo para clicar em uma call
+    function htmlInfoInitCall() {
+        let html = `<div class="card bg-dark gap-3 py-3 p-2 m-5 shadow-lg rounded animate__animated animate__shakeX animate__delay-2s">
+                        <div class="card-body text-center">
+                            <h2><i class="bi bi-arrow-left"></i> Clique em um cliente da lista.</h2>
+                        </div>
+                    </div>`
+        print_msg.insertAdjacentHTML('beforeend', html)
     }
 
 
@@ -392,20 +412,47 @@
     //  CHAT
     //###############  
 
+    //Povoar a mostrar cabeçalho do chat
+    function headerChat() {
+        div_header_chat.style.display = 'block'
+    }
+
     //Selecionar call para troca de msg
     function selectCall(data) {
-       let uuid = data.dataset.uuid
-       let call = data.dataset.call
-       let img = data.querySelector('img').src
-       let name = data.querySelector('.j_item_call div h6').innerText
-       let text = data.querySelector('.j_item_call div p').innerText
-       let time = data.querySelector('.j_item_call div small').innerText        
-        printMsgClient(name, text, img, time)
+
+        let call_uuid = data.dataset.uuid
+        let call_id = data.dataset.call
+        let call = data_calls[`call_${call_id}`].call
+        client = data_calls[`call_${call_id}`].user
+        j_print_msg.innerHTML = ''
+
+        printMsgClient(client.name, call.call_objective, client.avatar, formatHora(call.call_update))
+
+        sendMessage({
+            "cmd": "cmd_call_history",
+            "call": call_id,
+            "limit": 500,
+            "offset": 0
+        })
+
+        sendMessage({
+            "cmd": "cmd_check_user_on",
+            "check_on_uuid": call_uuid,
+        })
+        headerChat()
+
+        if (Number(call.call_status) == 1) {
+            div_start_call.style.display = 'block'
+            div_input_msg.style.display = 'none'
+        } else {
+            div_start_call.style.display = 'none'
+            div_input_msg.style.display = 'block'
+        }
     }
 
     //Html da msg do cliente
     function printMsgClient(name, text, img = false, time = false) {
-        img = img ? img : "./assets/img/monkey.jpg"
+        img = img ? img : "./assets/img/user.png"
         time = time ? time : hora()
         let html = ` <div class="list-group-item list-group-item d-flex gap-3 py-3 p-3 w-75 m-2 shadow msg-right animate__animated animate__fadeInDown">
                         <img src="${img}" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">
@@ -440,23 +487,27 @@
         addScroll()
     }
 
-    //Receber mensagem
-    function receiveMsg() {
-        printMsgClient(attendant.name, input_send.value, "")
-        addScroll()
-    }
-
 
     //###############
     //  HISTÓRICO
     //###############  
 
+    //Listar mensagens anteriores da call
+    function cmdCallHistory(data) {
+        printHistory(data.chat)
+
+    }
+
     //Listar histórico de mensagens
     function printHistory(msgs) {
+        attendant = getUser()
+
         msgs.forEach(function (msg) {
-            client_uuid == msg.origin ?
-                printMsgClient(attendant.name, msg.text, client_img) :
-                printMsgAttendant(attendant.name, msg.text, client_img)
+            attendant.uuid == msg.origin ?
+                printMsgClient(client.name, msg.text, client.avatar) :
+                printMsgAttendant(attendant.name, msg.text, attendant.avatar)
+
+            addScroll()
         });
     }
 
@@ -465,37 +516,12 @@
     //  CLIENTE
     //###############  
 
-    //Set dados do cliente
-    function setClient() {
-        if (!attendant) {
-
-            //Config request
-            let config = {
-                method: 'GET',
-                url: url_perfil,
-                headers: {
-                    'Content-Type': 'none',
-                    'Authorization': token,
-                    'Access-Control-Allow-Origin': '*'
-                },
-                mode: 'cors'
-            }
-
-            //Request
-            axios(config)
-                .then(function (res) {
-                    if (res.data.result) {
-                        attendant = res.data.error.data
-                        attendant_img_src.src = attendant.avatar
-                    } else {
-                        swal.fire("Opss!!", res.data.error.msg, "error");
-                    }
-                })
-                .catch(function (err) {
-                    console.log(err)
-                    swal.fire("Opss!!", "Erro na conexão.", "error");
-                });
-        }
+    //Comando para mudar status do cliente
+    function cmdCheckUserOn(data) {
+        let online = `<b class="badge bg-success"><i class="bi bi-wifi"></i> Online</b>`
+        let offline = `<b class="badge bg-danger"><i class="bi bi-wifi-off"></i> Offline</b>` 
+        let status = data.online ? online: offline
+        div_status_client.innerHTML = status
     }
 
 
@@ -529,7 +555,7 @@
         } else {
             changeState("logout")
         }
-
+        htmlInfoInitCall()
         actionButtons()
     }
 
