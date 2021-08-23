@@ -19,7 +19,7 @@
     const div_start_call = document.getElementById('j_div_start_call')
     const div_input_msg = document.getElementById('j_div_input_msg')
     const div_header_chat = document.getElementById('j_div_header_chat')
-    const div_status_client = document.getElementById('j_div_status_client')    
+    const div_status_client = document.getElementById('j_div_status_client')
     //Variáveis do Perfil
     const perfil_img = document.querySelectorAll('.j_perfil_img')
     const perfil_name = document.querySelectorAll('.j_perfil_name')
@@ -28,8 +28,6 @@
     const input_send = document.getElementById('j_input_send')
     const print_msg = document.getElementById('j_print_msg')
     const print_calls = document.getElementById('j_print_calls')
-    const client_img_src = document.getElementById('j_client_img_src')
-
     //Variáveis de dados   
     var attendant = null
     var conn_ws = null
@@ -134,8 +132,8 @@
             closeConn()
         }
 
-        btn_send.onclick = () => sendMsg()
-        input_send.onkeypress = (e) => { e.key == 'Enter' ? sendMsg() : null }
+        btn_send.onclick = () => submitMsg()
+        input_send.onkeypress = (e) => { e.key == 'Enter' ? submitMsg() : null }
     }
 
 
@@ -413,8 +411,11 @@
     //###############  
 
     //Povoar a mostrar cabeçalho do chat
-    function headerChat() {
+    function headerChat(call_id) {
         div_header_chat.style.display = 'block'
+        div_header_chat.querySelector('img').src = client.avatar
+        div_header_chat.querySelector('h6').innerText = `${client.name} ${client.lastname}`
+        div_input_msg.dataset.call = call_id
     }
 
     //Selecionar call para troca de msg
@@ -437,9 +438,9 @@
 
         sendMessage({
             "cmd": "cmd_check_user_on",
-            "check_on_uuid": call_uuid,
+            "check_on_uuid": call_uuid
         })
-        headerChat()
+        headerChat(call_id)
 
         if (Number(call.call_status) == 1) {
             div_start_call.style.display = 'block'
@@ -450,7 +451,7 @@
         }
     }
 
-    //Html da msg do cliente
+    //Escreve msg do cliente
     function printMsgClient(name, text, img = false, time = false) {
         img = img ? img : "./assets/img/user.png"
         time = time ? time : hora()
@@ -482,7 +483,13 @@
     }
 
     //Enviar mensagem
-    function sendMsg() {
+    function submitMsg() {        
+        sendMessage({
+            "cmd": "cmd_call_msg",
+            "call": div_input_msg.dataset.call,
+            "text": input_send.value
+        })
+
         printMsgAttendant(attendant.name, input_send.value)
         addScroll()
     }
@@ -519,8 +526,8 @@
     //Comando para mudar status do cliente
     function cmdCheckUserOn(data) {
         let online = `<b class="badge bg-success"><i class="bi bi-wifi"></i> Online</b>`
-        let offline = `<b class="badge bg-danger"><i class="bi bi-wifi-off"></i> Offline</b>` 
-        let status = data.online ? online: offline
+        let offline = `<b class="badge bg-danger"><i class="bi bi-wifi-off"></i> Offline</b>`
+        let status = data.online ? online : offline
         div_status_client.innerHTML = status
     }
 

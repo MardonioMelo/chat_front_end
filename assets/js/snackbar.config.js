@@ -16,7 +16,7 @@
             pos: 'top-left',         
             customClass: "rounded border-5 border-danger border-start",        
             actionText: `<i class="bi bi-x-lg"></i>`,
-            duration: 10000   
+            duration: 6000   
         });
     }  
 
@@ -26,7 +26,7 @@
             pos: 'bottom-left',         
             customClass: "rounded border-5 border-info border-start",        
             actionText: `<i class="bi bi-x-lg"></i>`,
-            duration: 6000   
+            duration: 3000   
         });
     }
 
@@ -36,7 +36,7 @@
             pos: 'bottom-left',         
             customClass: "rounded border-5 border-success border-start",        
             actionText: `<i class="bi bi-x-lg"></i>`,
-            duration: 5000   
+            duration: 3000   
         });
     }
 
@@ -56,7 +56,7 @@
             pos: 'bottom-left',         
             customClass: "rounded border-5 border-primary border-start",        
             actionText: `<i class="bi bi-x-lg"></i>`,
-            duration: 6000
+            duration: 3000
         });
     }
 })()
