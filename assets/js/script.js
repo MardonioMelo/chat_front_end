@@ -113,10 +113,6 @@
     //Botões de ação
     function actionButtons() {
 
-        item_call.forEach(function (data) {
-            data.addEventListener('click', activeCall, false);
-        })
-
         btn_login.onclick = () => {
             changeState('load')
             toConnect()
@@ -347,23 +343,29 @@
 
     //Obter os itens da lista de espera que estão listados na div pai
     function getPrintCall() {
-        item_call = [...document.getElementsByClassName('j_item_call')]
+        item_call = [...document.querySelectorAll('.j_item_call')]
+    }
+
+    //Ativar call selecionada
+    function activeCall() {
+        item_call.forEach((data) => { data.classList.remove('call-active') });
+        this.classList.add('call-active');
+        selectCall(this)
     }
 
     //Html da msg do cliente
     function printCall(call, uuid, name, text, img, time, newmsg = false) {
         img = img ? img : "./assets/img/monkey.jpg"
-        let html = `<a href="#" class="list-group-item d-flex gap-3 py-3 m-1 rounded shadow-sm j_item_call"
-                        data-call="${call}" data-uuid="${uuid}"
-                        aria-current="true">
+        let html = `<a href="#" class="list-group-item d-flex gap-3 py-3 m-1 rounded shadow-sm j_item_call" data-call="${call}" data-uuid="${uuid}" aria-current="true">
                         ${newmsg ? '<span class="position-absolute top-50 start-75 translate-middle p-1 bg-primary border border-light rounded-circle"></span>' : ''}
-                        <img src="${img}" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">
-                        <div class="d-flex gap-2 w-100 justify-content-between">
+                        <img src="${img}" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">                        
+                        <div class="d-flex gap-2 w-100 justify-content-between position-relative">                            
                             <div>
                                 <h6 class="mb-0 fw-bold">${name}</h6>
                                 <p class="mb-0 opacity-75">${text}</p>
                             </div>
                             <small class="opacity-50 text-nowrap">${time}</small>
+                            <span class="position-absolute top-100 translate-middle badge rounded-pill bg-warning text-dark">#${call} </span>
                         </div>
                     </a>`
         print_calls.insertAdjacentHTML('beforeend', html)
@@ -377,7 +379,11 @@
             Object.values(calls.clients).forEach(function (data) {
                 printCall(data.call.call_id, data.user.uuid, data.user.name, data.call.call_objective, data.user.avatar, formatHora(data.call.call_update))
             });
+
             getPrintCall()
+            item_call.forEach(function (data) {
+                data.addEventListener('click', activeCall, false);
+            })
         }
     }
 
@@ -386,9 +392,21 @@
     //  CHAT
     //###############  
 
+    //Selecionar call para troca de msg
+    function selectCall(data) {
+       let uuid = data.dataset.uuid
+       let call = data.dataset.call
+       let img = data.querySelector('img').src
+       let name = data.querySelector('.j_item_call div h6').innerText
+       let text = data.querySelector('.j_item_call div p').innerText
+       let time = data.querySelector('.j_item_call div small').innerText        
+        printMsgClient(name, text, img, time)
+    }
+
     //Html da msg do cliente
-    function printMsgClient(name, text, img = false) {
+    function printMsgClient(name, text, img = false, time = false) {
         img = img ? img : "./assets/img/monkey.jpg"
+        time = time ? time : hora()
         let html = ` <div class="list-group-item list-group-item d-flex gap-3 py-3 p-3 w-75 m-2 shadow msg-right animate__animated animate__fadeInDown">
                         <img src="${img}" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">
                         <div class="d-flex gap-2 w-100 justify-content-between">
@@ -396,7 +414,7 @@
                                 <h6 class="mb-0 fw-bold">${name}</h6>
                                 <p class="mb-0 opacity-75">${text}</p>
                             </div>
-                            <small class="opacity-50 text-nowrap">${hora()}</small>
+                            <small class="opacity-50 text-nowrap">${time}</small>
                         </div>
                     </div>`
         print_msg.insertAdjacentHTML('beforeend', html)
@@ -426,12 +444,6 @@
     function receiveMsg() {
         printMsgClient(attendant.name, input_send.value, "")
         addScroll()
-    }
-
-    //Ativar call selecionada
-    function activeCall() {
-        item_call.forEach((data) => { data.classList.remove('call-active') });
-        this.classList.add('call-active');
     }
 
 
