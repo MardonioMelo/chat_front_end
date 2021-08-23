@@ -169,15 +169,15 @@
                     if (res.data.result) {
                         saveDataToken(res.data.error)
                         requestPerfil(res.data.error.token)
-                        changeState('chat')
+                        initSocket()
                     } else {
                         changeState('conectar')
-                        swal.fire("Opss!!", res.data.error.msg, "error");
+                        notifyError(res.data.error.msg)
                     }
                 })
                 .catch(function (err) {
                     changeState('conectar')
-                    swal.fire("Opss!!", "Não foi possível gerar sua autentificação, verifique sua conexão.", "error");
+                    notifyOffline('Não foi possível gerar sua autentificação, erro na conexão com o servidor HTTP.')
                 });
         } else {
             changeState('chat')
@@ -264,7 +264,7 @@
 
     //Obter dados do user da sessão
     function getUser(data) {
-        return JSON.parse(sessionStorage.setItem("user"))
+        return JSON.parse(sessionStorage.getItem("user"))
     }
 
 
@@ -288,12 +288,10 @@
         //Evento ao enviar/receber mensagens
         conn_ws.addEventListener('message', message => {
             messages = JSON.parse(message.data)
+            console.log(messages)
 
             if (messages.result) {
-                console.log(messages.error)
                 cmd[messages.error.data.cmd](messages.error.data)
-                //verificar os comandos vindo do servdior para executar as funções            
-                notifyInfo(messages.error.msg)
             } else {
                 notifyInfo(messages.error.msg)
             }
@@ -330,8 +328,16 @@
         }
     }
 
+    //Cmd conectado
     function cmdConnection() {
-        console.log("Conectado")
+        let data = new Date();
+        if (data.getHours() >= 12 && data.getHours() < 18) {
+            notifyPrimary(`Boa tarde <b>${getUser().name}</b>, bom trabalho!`)
+        } else if (data.getHours() >= 0 && data.getHours() < 12) {
+            notifyPrimary(`Bom dia <b>${getUser().name}</b>, bom trabalho!`)
+        } else {
+            notifyPrimary(`Boa noite <b>${getUser().name}</b>, bom trabalho!`)
+        }
     }
 
 
@@ -345,14 +351,12 @@
     }
 
     //Html da msg do cliente
-    function printCall(call, uuid, name, text, img, time, online = false) {
+    function printCall(call, uuid, name, text, img, time, newmsg = false) {
         img = img ? img : "./assets/img/monkey.jpg"
         let html = `<a href="#" class="list-group-item d-flex gap-3 py-3 m-1 rounded shadow-sm j_item_call"
                         data-call="${call}" data-uuid="${uuid}"
                         aria-current="true">
-                        <span
-                            class="position-absolute top-50 start-75 translate-middle p-1 bg-${online ? 'success' : 'danger'} border border-light rounded-circle">
-                        </span>
+                        ${newmsg ? '<span class="position-absolute top-50 start-75 translate-middle p-1 bg-primary border border-light rounded-circle"></span>' : ''}
                         <img src="${img}" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">
                         <div class="d-flex gap-2 w-100 justify-content-between">
                             <div>
@@ -367,20 +371,20 @@
 
     //Consultar e atualizar listar de espera
     function cmdCallDataClients(calls) {
+        print_calls.innerHTML = ''
 
         if (calls) {
             Object.values(calls.clients).forEach(function (data) {
                 printCall(data.call.call_id, data.user.uuid, data.user.name, data.call.call_objective, data.user.avatar, formatHora(data.call.call_update))
             });
             getPrintCall()
-        } 
+        }
     }
 
 
     //###############
     //  CHAT
     //###############  
-
 
     //Html da msg do cliente
     function printMsgClient(name, text, img = false) {
@@ -492,8 +496,6 @@
             createToken()
         } else {
             initSocket()
-
-            // printHistory(history)             
         }
     }
 
@@ -506,19 +508,17 @@
 
         let page = sessionStorage.getItem("page")
         if (page) {
-            changeState(page)
-            requestPerfil(getToken())
+            if (conn_ws) {
+                changeState(page)
+                requestPerfil(getToken())
+            } else {
+                toConnect()
+            }
         } else {
             changeState("logout")
         }
 
         actionButtons()
-
-
-
-
-
-
     }
 
     init()
