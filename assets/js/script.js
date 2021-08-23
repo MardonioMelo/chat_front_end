@@ -134,7 +134,7 @@
 
         btn_send.onclick = () => submitMsg()
         input_send.onkeypress = (e) => { e.key == 'Enter' ? submitMsg() : null }
-    }
+    }   
 
 
     //###############

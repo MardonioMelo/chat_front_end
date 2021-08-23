@@ -96,8 +96,19 @@
                         <div>
                             <h6 class="mb-0 fw-bold">Cliente</h6>
                             <p class="mb-0 opacity-75">
-                                <span id="j_div_status_client"><i class="bi bi-wifi"></i> Online</span>                            
-                                <span class="p-2 ms-2 fw-bold"><i class="bi bi-alarm"></i> Espera: 00:00</span>
+                                <span id="j_div_status_client"><i class="bi bi-wifi"></i> Online</span>
+                                <span class="p-2 ms-2 fw-bold">
+                                    <i class="bi bi-alarm"></i> Espera:
+                                    <span id="snackbar_hour">00</span>:
+                                    <span id="snackbar_minute">00</span>:
+                                    <span id="snackbar_second">00</span>:
+                                    <span id="snackbar_millisecond">000</span>
+                                </span>
+                                <span class="btn-group" role="group">
+                                    <span class="btn badge bg-success" id="j_snackbar_start">Start</span>
+                                    <span class="btn badge bg-danger" id="j_snackbar_pause">Stop</span>
+                                    <span class="btn badge bg-primary" id="j_snackbar_reset">Reset</span>
+                                </span>
                             </p>
                         </div>
                         <small class="text-nowrap">
@@ -108,7 +119,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="list-group list-group-flush scrollarea" id="j_print_msg">
 
                 <!--Alerta de Sucesso-->
@@ -128,8 +138,8 @@
             <!-- Botão para iniciar atendimento -->
             <div class="mt-auto text-white-50 py-3" id="j_div_start_call" style="display: none;">
                 <div class="d-grid gap-2 col-6 mx-auto">
-                    <button class="btn btn-success btn-lg text-white bg-gradient" type="button"><i
-                            class="bi bi-caret-left"></i> Iniciar Atendimento</button>
+                    <button class="btn btn-success btn-lg text-white bg-gradient" type="button">
+                        <i class="bi bi-caret-left"></i> Iniciar Atendimento</button>
                 </div>
             </div>
 
@@ -200,6 +210,7 @@
     <script src="node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
     <script src="node_modules/node-snackbar/dist/snackbar.min.js"></script>
     <script src="assets/js/snackbar.config.js"></script>
+    <script src="assets/js/stopwatch.js"></script>
     <script src="assets/js/script.js"></script>
 </body>
 
