@@ -7,6 +7,7 @@
     <meta name="description" content="Chat de atendimento ao cliente">
     <meta name="author" content="GR8 Sistemas">
     <title>Chat de Atendimento</title>
+    <link rel="shortcut icon" href="assets/img/favicon.png">
     <!-- Bootstrap core CSS -->
     <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Icons -->
@@ -121,7 +122,6 @@
                 </div>
             </div>
             <div class="list-group list-group-flush scrollarea" id="j_print_msg">
-
                 <!--Alerta de Sucesso-->
                 <!-- <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <strong><i class="bi bi-check2-circle"></i> Sucesso </strong> ao finalizar o atendimento!
@@ -139,7 +139,7 @@
             <!-- Botão para iniciar atendimento -->
             <div class="mt-auto text-white-50 py-3" id="j_div_start_call" style="display: none;">
                 <div class="d-grid gap-2 col-6 mx-auto">
-                    <button class="btn btn-success btn-lg text-white bg-gradient" type="button">
+                    <button type="button" class="btn btn-success btn-lg text-white bg-gradient" id="j_btn_start_call" type="button">
                         <i class="bi bi-caret-left"></i> Iniciar Atendimento</button>
                 </div>
             </div>

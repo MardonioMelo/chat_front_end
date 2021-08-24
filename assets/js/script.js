@@ -28,6 +28,7 @@
     const input_send = document.getElementById('j_input_send')
     const print_msg = document.getElementById('j_print_msg')
     const print_calls = document.getElementById('j_print_calls')
+    const btn_start_call = document.getElementById('j_btn_start_call')
     //Variáveis de dados   
     var attendant = null
     var conn_ws = null
@@ -35,13 +36,15 @@
     var item_call = []
     var data_calls = null
     var client = null
-
+    var call = null
     //Comandos
     const cmd = {
         cmd_connection: cmdConnection,
         cmd_call_data_clients: cmdCallDataClients,
         cmd_call_history: cmdCallHistory,
-        cmd_check_user_on: cmdCheckUserOn
+        cmd_check_user_on: cmdCheckUserOn,
+        cmd_call_msg: cmdCallMsg,
+        cmd_call_start: cmdCallStart
     }
 
     /* global bootstrap: false */
@@ -132,6 +135,7 @@
             closeConn()
         }
 
+        btn_start_call.onclick = () => startCall()
         btn_send.onclick = () => submitMsg()
         input_send.onkeypress = (e) => { e.key == 'Enter' ? submitMsg() : null }
     }
@@ -328,7 +332,7 @@
         }
         sessionStorage.removeItem('call_in_progress')
         sessionStorage.removeItem('user')
-        sessionStorage.removeItem('token_chat')       
+        sessionStorage.removeItem('token_chat')
         div_start_call.style.display = 'none'
         div_input_msg.style.display = 'none'
         headerChat()
@@ -366,9 +370,9 @@
     }
 
     //Html da msg do cliente
-    function printCall(call, uuid, name, text, img, time, newmsg = false) {
+    function printCall(call, uuid, name, text, img, time, active = "", newmsg = false) {
         img = img ? img : "./assets/img/user.png"
-        let html = `<a href="#" class="list-group-item d-flex gap-3 py-3 m-1 rounded shadow-sm j_item_call animate__animated animate__bounceInDown" data-call="${call}" data-uuid="${uuid}" aria-current="true">
+        let html = `<a href="#" class="list-group-item d-flex gap-3 py-3 m-1 rounded shadow-sm j_item_call animate__animated animate__bounceInDown ${active}" data-call="${call}" data-uuid="${uuid}" aria-current="true">
                         ${newmsg ? '<span class="position-absolute top-50 start-75 translate-middle p-1 bg-primary border border-white rounded-circle"></span>' : ''}
                         <img src="${img}" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0 border border-2 border-white">                        
                         <div class="d-flex gap-2 w-100 justify-content-between position-relative">                            
@@ -385,11 +389,14 @@
 
     //Consultar e atualizar listar de espera
     function cmdCallDataClients(calls) {
+        let call_in_progress = sessionStorage.getItem('call_in_progress')
+        let active
         print_calls.innerHTML = ''
 
         if (calls) {
             Object.values(calls.clients).forEach(function (data) {
-                printCall(data.call.call_id, data.user.uuid, data.user.name, data.call.call_objective, data.user.avatar, formatHora(data.call.call_update))
+                active = call_in_progress == data.call.call_id ? 'call-active' : ''
+                printCall(data.call.call_id, data.user.uuid, data.user.name, data.call.call_objective, data.user.avatar, formatHora(data.call.call_update), active)
             });
 
             getPrintCall()
@@ -414,15 +421,19 @@
 
         //Verificar se alguma ja foi selecionada antes       
         if (call_in_progress) {
-            setTimeout(() => {
-                let select_item = print_calls.querySelector(`[data-call="${call_in_progress}"]`)
-                select_item.classList.add('call-active');
-                selectCall(select_item)
-            }, 1000)
+            selectCallInProgress(call_in_progress)
         } else {
             print_msg.innerHTML = ''
             print_msg.insertAdjacentHTML('beforeend', html)
         }
+    }
+
+    //Prit call já selecionada
+    function selectCallInProgress(call_in_progress) {
+        setTimeout(() => {
+            let select_item = print_calls.querySelector(`[data-call="${call_in_progress}"]`)
+            selectCall(select_item)
+        }, 1500)
     }
 
 
@@ -450,7 +461,7 @@
 
         let call_uuid = data.dataset.uuid
         let call_id = data.dataset.call
-        let call = data_calls[`call_${call_id}`].call
+        call = data_calls[`call_${call_id}`].call
         client = data_calls[`call_${call_id}`].user
         print_msg.innerHTML = ''
 
@@ -493,6 +504,7 @@
                         </div>
                     </div>`
         print_msg.insertAdjacentHTML('beforeend', html)
+        addScroll()
     }
 
     //Html da msg do atendente
@@ -507,6 +519,7 @@
                         </div>
                     </div>`
         print_msg.insertAdjacentHTML('beforeend', html)
+        addScroll()
     }
 
     //Enviar mensagem
@@ -519,10 +532,51 @@
             })
             printMsgAttendant(attendant.name, input_send.value)
             input_send.value = ''
-            addScroll()
         } else {
             notifyWarning("Mensagens vazias não podem ser enviadas!")
         }
+    }
+
+    //Print das mensagens recebidas
+    function cmdCallMsg(data) {
+        printMsgClient(client.name, data.text, client.avatar, formatHora(call.call_update))
+    }
+
+    //Iniciar call
+    function startCall() {
+
+        Swal.fire({
+            title: 'Inicia este atendimento?',
+            text: "Se iniciar este atendimento não será possível outro atendente iniciar!",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sim, iniciar este!',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                sendMessage({
+                    "cmd": "cmd_call_start",
+                    "call": div_input_msg.dataset.call
+                })
+            }
+        })
+    }
+
+    //Comando iniciar call
+    function cmdCallStart(data) {
+
+        div_input_msg.style.display = 'block'
+        div_start_call.style.display = 'none'
+
+        Swal.fire({
+            position: 'top-end',
+            icon: 'success',
+            title: 'Atendimento Iniciado!',
+            showConfirmButton: false,
+            timer: 1500
+        })
     }
 
 
@@ -533,7 +587,6 @@
     //Listar mensagens anteriores da call
     function cmdCallHistory(data) {
         printHistory(data.chat)
-
     }
 
     //Listar histórico de mensagens
@@ -542,10 +595,8 @@
 
         msgs.forEach(function (msg) {
             attendant.uuid == msg.origin ?
-                printMsgClient(client.name, msg.text, client.avatar) :
-                printMsgAttendant(attendant.name, msg.text, attendant.avatar)
-
-            addScroll()
+                printMsgAttendant(attendant.name, msg.text, attendant.avatar) :
+                printMsgClient(client.name, msg.text, client.avatar)
         });
     }
 

@@ -1,23 +1,15 @@
-# Front-end para Chat de Atendimento
+# Front-end para Chat de Atendimento 
 Front-end de um chat para consumo da [API Chat de Atendimento](https://github.com/MardonioMelo/chat_api).
 
-### Tecnologias:
-- HTML5
-- JS
-- CSS3
-- NodeJs
-- NPM
 
-### Dependências:
-- Bootstrap 5.1
-- Bootstrap Icons
-- Axios
-- SweetAlert2
-- Animate
-- Node-Snackbar
+<h4 align="left"> 
+	🚧  Em construção...  🚧
+</h4>
 
 # Instalação
-Execite o comando para instalar as dependências
+Clone/baixe este repositório na sua aplicação/sistema e crie um link para acesso a esta pasta.
+
+Execute este comando dentro da pasta para instalar as dependências:
 >
     npm install
 >
@@ -38,3 +30,19 @@ O único requisito é executar este script antes de carregar a pagina do chat:
 Lembre-se que os dados desse script devem ser informados dinamicamente conforme usuário logado em seu sistema.
 
 <i><b>NOTA:</b> Por segurança, não recomenda-se salvar os dados do usuário de forma estática neste script.</i>
+
+
+# Tecnologias:
+- HTML5
+- JS
+- CSS3
+- NodeJs
+- NPM
+
+# Dependências:
+- Bootstrap 5.1
+- Bootstrap Icons
+- Axios
+- SweetAlert2
+- Animate
+- Node-Snackbar
