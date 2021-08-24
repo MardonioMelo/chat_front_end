@@ -1,20 +1,26 @@
 # Front-end para Chat de Atendimento
 Front-end de um chat para consumo da [API Chat de Atendimento](https://github.com/MardonioMelo/chat_api).
 
+### Tecnologias:
+- HTML5
+- JS
+- CSS3
+- NodeJs
+- NPM
+
+### Dependências:
+- Bootstrap 5.1
+- Bootstrap Icons
+- Axios
+- SweetAlert2
+- Animate
+- Node-Snackbar
+
 # Instalação
 Execite o comando para instalar as dependências
 >
     npm install
 >
-
-# Tecnologias
-- HTML5
-- JS
-- CSS
-- Bootstrap 5
-- Axios
-- Sweet Alert
-- Animate
 
 # Configuração
 
