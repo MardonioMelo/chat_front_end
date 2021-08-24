@@ -134,7 +134,7 @@
 
         btn_send.onclick = () => submitMsg()
         input_send.onkeypress = (e) => { e.key == 'Enter' ? submitMsg() : null }
-    }   
+    }
 
 
     //###############
@@ -354,7 +354,7 @@
     function activeCall() {
         item_call.forEach((data) => { data.classList.remove('call-active') });
         this.classList.add('call-active');
-        selectCall(this)
+        selectCall(this)       
     }
 
     //Html da msg do cliente
@@ -483,15 +483,19 @@
     }
 
     //Enviar mensagem
-    function submitMsg() {        
-        sendMessage({
-            "cmd": "cmd_call_msg",
-            "call": div_input_msg.dataset.call,
-            "text": input_send.value
-        })
-        printMsgAttendant(attendant.name, input_send.value)
-        input_send.value = ''
-        addScroll()
+    function submitMsg() {
+        if (input_send.value) {
+            sendMessage({
+                "cmd": "cmd_call_msg",
+                "call": div_input_msg.dataset.call,
+                "text": input_send.value
+            })
+            printMsgAttendant(attendant.name, input_send.value)
+            input_send.value = ''
+            addScroll()
+        }else{
+            notifyWarning("Mensagens vazias não podem ser enviadas!")
+        }
     }
 
 
