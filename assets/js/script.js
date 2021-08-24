@@ -326,6 +326,13 @@
         if (conn_ws) {
             conn_ws.close()
         }
+        sessionStorage.removeItem('call_in_progress')
+        sessionStorage.removeItem('user')
+        sessionStorage.removeItem('token_chat')       
+        div_start_call.style.display = 'none'
+        div_input_msg.style.display = 'none'
+        headerChat()
+        htmlInfoInitCall()
     }
 
     //Cmd conectado
@@ -354,7 +361,8 @@
     function activeCall() {
         item_call.forEach((data) => { data.classList.remove('call-active') });
         this.classList.add('call-active');
-        selectCall(this)       
+        selectCall(this)
+        sessionStorage.setItem('call_in_progress', this.dataset.call)
     }
 
     //Html da msg do cliente
@@ -395,14 +403,26 @@
         }
     }
 
-    //Texto informativo para clicar em uma call
+    //Texto informativo para selecionar uma call
     function htmlInfoInitCall() {
         let html = `<div class="card bg-dark gap-3 py-3 p-2 m-5 shadow-lg rounded animate__animated animate__shakeX animate__delay-2s">
                         <div class="card-body text-center">
                             <h2><i class="bi bi-arrow-left"></i> Clique em um cliente da lista.</h2>
                         </div>
                     </div>`
-        print_msg.insertAdjacentHTML('beforeend', html)
+        let call_in_progress = sessionStorage.getItem('call_in_progress')
+
+        //Verificar se alguma ja foi selecionada antes       
+        if (call_in_progress) {
+            setTimeout(() => {
+                let select_item = print_calls.querySelector(`[data-call="${call_in_progress}"]`)
+                select_item.classList.add('call-active');
+                selectCall(select_item)
+            }, 1000)
+        } else {
+            print_msg.innerHTML = ''
+            print_msg.insertAdjacentHTML('beforeend', html)
+        }
     }
 
 
@@ -412,10 +432,17 @@
 
     //Povoar a mostrar cabeçalho do chat
     function headerChat(call_id) {
-        div_header_chat.style.display = 'block'
-        div_header_chat.querySelector('img').src = client.avatar
-        div_header_chat.querySelector('h6').innerText = `${client.name} ${client.lastname}`
-        div_input_msg.dataset.call = call_id
+        if (call_id) {
+            div_header_chat.style.display = 'block'
+            div_header_chat.querySelector('img').src = client.avatar
+            div_header_chat.querySelector('h6').innerText = `${client.name} ${client.lastname}`
+            div_input_msg.dataset.call = call_id
+        } else {
+            div_header_chat.style.display = 'none'
+            div_header_chat.querySelector('img').src = './assets/img/user.png'
+            div_header_chat.querySelector('h6').innerText = 'Cliente'
+            div_input_msg.dataset.call = ""
+        }
     }
 
     //Selecionar call para troca de msg
@@ -425,7 +452,7 @@
         let call_id = data.dataset.call
         let call = data_calls[`call_${call_id}`].call
         client = data_calls[`call_${call_id}`].user
-        j_print_msg.innerHTML = ''
+        print_msg.innerHTML = ''
 
         printMsgClient(client.name, call.call_objective, client.avatar, formatHora(call.call_update))
 
@@ -493,7 +520,7 @@
             printMsgAttendant(attendant.name, input_send.value)
             input_send.value = ''
             addScroll()
-        }else{
+        } else {
             notifyWarning("Mensagens vazias não podem ser enviadas!")
         }
     }
@@ -545,6 +572,7 @@
             createToken()
         } else {
             initSocket()
+            requestPerfil(getToken())
         }
     }
 
@@ -554,9 +582,9 @@
     //###############   
 
     function init() {
-
         let page = sessionStorage.getItem("page")
-        if (page) {
+
+        if (page && page == 'chat') {
             if (conn_ws) {
                 changeState(page)
                 requestPerfil(getToken())
