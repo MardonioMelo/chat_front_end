@@ -40,7 +40,6 @@
                         <i class="bi bi-chat-left-text-fill icon-navbar"></i>
                     </a>
                 </li>
-                <!-- Implementação futura
                 <li>
                     <a href="#" class="nav-link py-3" title="Histórico" data-bs-toggle="tooltip"
                         data-bs-placement="right">
@@ -52,7 +51,7 @@
                         data-bs-placement="right">
                         <i class="bi bi-person-circle icon-navbar"></i>
                     </a>
-                </li> -->
+                </li>
             </ul>
             <div class="dropdown">
                 <a href="#"
@@ -110,7 +109,7 @@
                                     <span id="snackbar_second">00</span>:
                                     <span id="snackbar_millisecond">000</span>
                                 </span>
-                                
+
                             </p>
                         </div>
                         <small class="text-nowrap">
@@ -139,20 +138,24 @@
             <!-- Botão para iniciar atendimento -->
             <div class="mt-auto text-white-50 py-3" id="j_div_start_call" style="display: none;">
                 <div class="d-grid gap-2 col-6 mx-auto">
-                    <button type="button" class="btn btn-success btn-lg text-white bg-gradient" id="j_btn_start_call" type="button">
+                    <button type="button" class="btn btn-success btn-lg text-white bg-gradient" id="j_btn_start_call"
+                        type="button">
                         <i class="bi bi-caret-left"></i> Iniciar Atendimento</button>
                 </div>
             </div>
 
-            <!-- Input de Mensagens -->
-            <div class="mt-auto text-white-50 py-3" id="j_div_input_msg" data-call="null" style="display: none;">
-                <div class="input-group ">
-                    <input type="text" class="form-control bg-input-chat" placeholder="Mensagem..." id="j_input_send">
-                    <button class="btn btn-outline-secondary" id="j_btn_send">
-                        <i class="bi bi-telegram" style="font-size: 1.8rem;"></i>
+            <!-- Input de Mensagens -->          
+            <div class="row g-2 text-white-50 py-3 bg-input-chat" id="j_div_input_msg" data-call="null" style="display: none;">
+                <div class="col-11">
+                    <textarea type="text" class="form-control px-4 rounded-pill border-0" placeholder="Mensagem..."
+                    id="j_input_send"></textarea>
+                </div>                
+                <div class="col-1">
+                    <button class="btn btn-secondary" id="j_btn_send">
+                        <i class="bi bi-arrow-right" style="font-size: 1.9rem;"></i>
                     </button>
                 </div>
-            </div>
+            </div>          
         </div>
         <!-- End chat -->
 

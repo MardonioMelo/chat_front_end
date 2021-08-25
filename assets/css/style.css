@@ -59,10 +59,22 @@ main {
   background-color: #4d4d4d;
 }
 
-.bg-input-chat{
+.bg-input-chat textarea{
   background-color: #5c5c5c !important;
-  border: none;
-  color: #fff !important;  
+  color: rgb(214, 212, 212) !important;
+}
+
+.bg-input-chat button{
+  color: #f8f9fa !important;
+  background-color: #665dfe; 
+  border-radius: 50%!important; 
+  border: none !important;
+}
+
+.bg-input-chat button:hover{
+  background-color: rgb(53, 43, 243) !important;   
+  transition-duration: .4s;
+  border-color:  #0b01cf !important;   
 }
 
 .icon-home{

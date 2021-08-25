@@ -428,7 +428,7 @@
         }
     }
 
-    //Prit call já selecionada
+    //Mostrar call já selecionada
     function selectCallInProgress(call_in_progress) {
         setTimeout(() => {
             let select_item = print_calls.querySelector(`[data-call="${call_in_progress}"]`)
@@ -485,7 +485,7 @@
             div_input_msg.style.display = 'none'
         } else {
             div_start_call.style.display = 'none'
-            div_input_msg.style.display = 'block'
+            div_input_msg.style.display = 'flex'
         }
     }
 
@@ -567,7 +567,7 @@
     //Comando iniciar call
     function cmdCallStart(data) {
 
-        div_input_msg.style.display = 'block'
+        div_input_msg.style.display = 'flex'
         div_start_call.style.display = 'none'
 
         Swal.fire({
