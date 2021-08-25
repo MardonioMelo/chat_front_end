@@ -37,6 +37,16 @@
     var data_calls = null
     var client = null
     var call = null
+    //Crônometro
+    var hour = 0
+    var minute = 0
+    var second = 0
+    var millisecond = 0
+    var cron
+    const snackbar_hour = document.getElementById('snackbar_hour')
+    const snackbar_minute = document.getElementById('snackbar_minute')
+    const snackbar_second = document.getElementById('snackbar_second')
+    const snackbar_millisecond = document.getElementById('snackbar_millisecond')
     //Comandos
     const cmd = {
         cmd_connection: cmdConnection,
@@ -140,6 +150,59 @@
                 return false
             }
         }
+    }
+
+
+    //###############
+    //  Cronômetro
+    //###############
+
+    //Start
+    function snackbarStart() {
+        snackbarPause()
+        cron = setInterval(() => { timer(); }, 10)
+    }
+
+    //Pause
+    function snackbarPause() {
+        clearInterval(cron)
+    }
+
+    //Reset
+    function snackbarReset() {
+        hour = 0
+        minute = 0
+        second = 0
+        millisecond = 0
+        snackbar_hour.innerText = '00'
+        snackbar_minute.innerText = '00'
+        snackbar_second.innerText = '00'
+        snackbar_millisecond.innerText = '000'
+    }
+
+    //Tempo
+    function timer() {
+        if ((millisecond += 10) == 1000) {
+            millisecond = 0
+            second++
+        }
+        if (second == 60) {
+            second = 0
+            minute++
+        }
+        if (minute == 60) {
+            minute = 0
+            hour++
+        }
+        snackbar_hour.innerText = returnData(hour)
+        snackbar_minute.innerText = returnData(minute)
+        snackbar_second.innerText = returnData(second)
+        snackbar_millisecond.innerText = returnData(millisecond)
+    }
+
+    //Retorno
+    function returnData(input) {
+        return input > 10 ? input : `0${input}`
     }
 
 
@@ -542,6 +605,7 @@
             })
             printMsgAttendant(attendant.name, input_send.value, hora())
             input_send.value = ""
+            snackbarStart()
         } else {
             notifyWarning("Mensagens vazias não podem ser enviadas!")
         }
@@ -549,7 +613,9 @@
 
     //Print das mensagens recebidas
     function cmdCallMsg(data) {
-        printMsgClient(client.name, data.text, data.date, client.avatar)
+        printMsgClient(client.name, data.text, data.date, client.avatar)        
+        snackbarPause()
+        snackbarReset()
     }
 
     //Iniciar call
@@ -609,8 +675,8 @@
 
     //Comando para mudar status do cliente
     function cmdCheckUserOn(data) {
-        let online = `<b class="badge bg-success"><i class="bi bi-wifi"></i> Online</b>`
-        let offline = `<b class="badge bg-danger"><i class="bi bi-wifi-off"></i> Offline</b>`
+        let online = `<b class="badge bg-success rounded-pill"><i class="bi bi-wifi"></i> Online</b>`
+        let offline = `<b class="badge bg-danger rounded-pill"><i class="bi bi-wifi-off"></i> Offline</b>`
         let status = data.online ? online : offline
         div_status_client.innerHTML = status
     }

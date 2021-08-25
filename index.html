@@ -96,20 +96,11 @@
                         <div>
                             <h6 class="mb-0 fw-bold">Cliente</h6>
                             <p class="mb-0 opacity-75">
-                                <span id="j_div_status_client"><i class="bi bi-wifi"></i> Online</span>
-                                <span class="btn-group  ms-2" role="group">
-                                    <span class="btn badge bg-success" id="j_snackbar_start">Start</span>
-                                    <span class="btn badge bg-danger" id="j_snackbar_pause">Stop</span>
-                                    <span class="btn badge bg-primary" id="j_snackbar_reset">Reset</span>
+                                <span class="p-1" id="j_div_status_client"><i class="bi bi-wifi"></i> Online</span>                                         
+                                <span class="badge rounded-pill bg-light text-danger">
+                                    <i class="bi bi-alarm"></i> 
+                                    <abbr id="snackbar_hour">00</abbr>:<abbr id="snackbar_minute">00</abbr>:<abbr id="snackbar_second">00</abbr>:<abbr id="snackbar_millisecond">000</abbr>                                   
                                 </span>
-                                <span class="p-2 ms-2 fw-bold">
-                                    <i class="bi bi-alarm"></i> Espera:
-                                    <span id="snackbar_hour">00</span>:
-                                    <span id="snackbar_minute">00</span>:
-                                    <span id="snackbar_second">00</span>:
-                                    <span id="snackbar_millisecond">000</span>
-                                </span>
-
                             </p>
                         </div>
                         <small class="text-nowrap">
@@ -215,8 +206,7 @@
     <script src="node_modules/axios/dist/axios.min.js"></script>
     <script src="node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
     <script src="node_modules/node-snackbar/dist/snackbar.min.js"></script>
-    <script src="assets/js/snackbar.config.js"></script>
-    <script src="assets/js/stopwatch.js"></script>
+    <script src="assets/js/snackbar.config.js"></script>   
     <script src="assets/js/script.js"></script>
 </body>
 
