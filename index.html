@@ -89,7 +89,7 @@
         <!-- Start Chat -->
         <div class="container-fluid d-flex flex-column bg-chat">
 
-            <div class="py-3 mb-3 border-bottom" id="j_div_header_chat" style="display: none;">
+            <div class="py-3 mb-1 border-bottom" id="j_div_header_chat" style="display: none;">
                 <div href="#" class="d-flex gap-3 py-1">
                     <img src="" alt="img" width="32" height="32" class="rounded-circle flex-shrink-0">
                     <div class="d-flex gap-2 w-100 justify-content-between">
@@ -136,23 +136,23 @@
             </div>
 
             <!-- Botão para iniciar atendimento -->
-            <div class="mt-auto text-white-50 py-3" id="j_div_start_call" style="display: none;">
+            <div class="mt-auto row g-2 text-white-50 py-3 border-top border-secondary bg-input-chat" id="j_div_start_call" style="display: none;">
                 <div class="d-grid gap-2 col-6 mx-auto">
-                    <button type="button" class="btn btn-success btn-lg text-white bg-gradient" id="j_btn_start_call"
+                    <button type="button" class="btn btn-success btn-lg text-white" id="j_btn_start_call"
                         type="button">
                         <i class="bi bi-caret-left"></i> Iniciar Atendimento</button>
                 </div>
             </div>
 
             <!-- Input de Mensagens -->          
-            <div class="row g-2 text-white-50 py-3 bg-input-chat" id="j_div_input_msg" data-call="null" style="display: none;">
+            <div class="mt-auto row g-2 text-white-50 py-3 border-top border-secondary bg-input-chat" id="j_div_input_msg" data-call="null" style="display: none;">
                 <div class="col-11">
-                    <textarea type="text" class="form-control px-4 rounded-pill border-0" placeholder="Mensagem..."
+                    <textarea type="text" rows="1" class="form-control px-4 rounded border-0" placeholder="Mensagem..." spellcheck="true"
                     id="j_input_send"></textarea>
                 </div>                
                 <div class="col-1">
-                    <button class="btn btn-secondary" id="j_btn_send">
-                        <i class="bi bi-arrow-right" style="font-size: 1.9rem;"></i>
+                    <button class="btn" id="j_btn_send">
+                        <i class="bi bi-telegram"></i>
                     </button>
                 </div>
             </div>          

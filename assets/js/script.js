@@ -137,7 +137,12 @@
 
         btn_start_call.onclick = () => startCall()
         btn_send.onclick = () => submitMsg()
-        input_send.onkeypress = (e) => { e.key == 'Enter' ? submitMsg() : null }
+        input_send.onkeypress = (e) => {
+            if(e.key == 'Enter'){
+                submitMsg()
+                return false
+            }
+        }
     }
 
 
@@ -524,14 +529,15 @@
 
     //Enviar mensagem
     function submitMsg() {
-        if (input_send.value) {
+
+        if (input_send.value.trim().length > 0) {
             sendMessage({
                 "cmd": "cmd_call_msg",
                 "call": div_input_msg.dataset.call,
                 "text": input_send.value
             })
             printMsgAttendant(attendant.name, input_send.value)
-            input_send.value = ''
+            input_send.value = ""
         } else {
             notifyWarning("Mensagens vazias não podem ser enviadas!")
         }

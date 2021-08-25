@@ -67,7 +67,7 @@ main {
 .bg-input-chat button{
   color: #f8f9fa !important;
   background-color: #665dfe; 
-  border-radius: 50%!important; 
+
   border: none !important;
 }
 
@@ -135,14 +135,27 @@ div.list-group .msg-left{
 }
 
 .scrollarea::-webkit-scrollbar {
-  width: 12px;               /* width of the entire scrollbar */
+  width: 12px;            
 }
 
 .scrollarea::-webkit-scrollbar-thumb {
-  background-color: #ffffff4f;    /* color of the scroll thumb */
-  border-radius: 0px 5px 5px 0px;    /* roundness of the scroll thumb */ 
+  background-color: #ffffff4f;   
+  border-radius: 0px 5px 5px 0px;    
 }
 
 a.call-active {
   background-color: #665dfe !important;
+}
+
+textarea::-webkit-scrollbar {
+  width: 12px;             
+}
+
+textarea::-webkit-scrollbar-thumb {
+  background-color: #ffffff4f;   
+  border-radius: 0px 5px 5px 0px;   
+}
+
+textarea{
+  cursor: default !important;
 }
