@@ -124,21 +124,18 @@
             changeState('load')
             toConnect()
         }
-
         btn_conectar.onclick = () => {
             changeState('load')
             toConnect()
         }
-
         btn_logout.onclick = () => {
             changeState('logout')
             closeConn()
         }
-
         btn_start_call.onclick = () => startCall()
         btn_send.onclick = () => submitMsg()
         input_send.onkeypress = (e) => {
-            if(e.key == 'Enter'){
+            if (e.key == 'Enter') {
                 submitMsg()
                 return false
             }
@@ -401,7 +398,13 @@
         if (calls) {
             Object.values(calls.clients).forEach(function (data) {
                 active = call_in_progress == data.call.call_id ? 'call-active' : ''
-                printCall(data.call.call_id, data.user.uuid, data.user.name, data.call.call_objective, data.user.avatar, formatHora(data.call.call_update), active)
+                if (data.call.call_attendant_uuid == attendant.uuid) { //listar call iniciadas pelo atendente
+                    printCall(data.call.call_id, data.user.uuid, data.user.name, data.call.call_objective, data.user.avatar, formatHora(data.call.call_update), active)
+                } else if (data.call.call_status == '1') { //listar call não iniciadas ainda
+                    printCall(data.call.call_id, data.user.uuid, data.user.name, data.call.call_objective, data.user.avatar, formatHora(data.call.call_update), active)
+                } else { //listar call iniciadas por outros atendentes
+                    //será implementado posteriormente                   
+                }
             });
 
             getPrintCall()
@@ -470,7 +473,7 @@
         client = data_calls[`call_${call_id}`].user
         print_msg.innerHTML = ''
 
-        printMsgClient(client.name, call.call_objective, client.avatar, formatHora(call.call_update))
+        printMsgClient(client.name, call.call_objective, formatHora(call.call_update), client.avatar)
 
         sendMessage({
             "cmd": "cmd_call_history",
@@ -495,7 +498,7 @@
     }
 
     //Escreve msg do cliente
-    function printMsgClient(name, text, img = false, time = false) {
+    function printMsgClient(name, text, time = false, img = false) {
         img = img ? img : "./assets/img/user.png"
         time = time ? time : hora()
         let html = ` <div class="list-group-item list-group-item d-flex gap-3 py-3 p-3 w-75 m-2 shadow msg-right animate__animated animate__fadeInDown">
@@ -513,14 +516,15 @@
     }
 
     //Html da msg do atendente
-    function printMsgAttendant(name, text) {
+    function printMsgAttendant(name, text, time) {
+        time = time ? time : hora()
         let html = `<div class="list-group-item list-group-item d-flex gap-3 py-3 p-3 w-75 m-2 shadow align-self-end msg-left animate__animated animate__fadeInDown">
                         <div class="d-flex gap-2 w-100 justify-content-between">
                             <div>
                                 <h6 class="mb-0 fw-bold">${name}</h6>
                                 <p class="mb-0 opacity-75">${text}</p>
                             </div>
-                            <small class="opacity-50 text-nowrap">${hora()}</small>
+                            <small class="opacity-50 text-nowrap">${time}</small>
                         </div>
                     </div>`
         print_msg.insertAdjacentHTML('beforeend', html)
@@ -536,7 +540,7 @@
                 "call": div_input_msg.dataset.call,
                 "text": input_send.value
             })
-            printMsgAttendant(attendant.name, input_send.value)
+            printMsgAttendant(attendant.name, input_send.value, hora())
             input_send.value = ""
         } else {
             notifyWarning("Mensagens vazias não podem ser enviadas!")
@@ -545,7 +549,7 @@
 
     //Print das mensagens recebidas
     function cmdCallMsg(data) {
-        printMsgClient(client.name, data.text, client.avatar, formatHora(call.call_update))
+        printMsgClient(client.name, data.text, data.date, client.avatar)
     }
 
     //Iniciar call
@@ -572,17 +576,9 @@
 
     //Comando iniciar call
     function cmdCallStart(data) {
-
+        notifyPrimary("Atendimento iniciado, boa sorte!")
         div_input_msg.style.display = 'flex'
         div_start_call.style.display = 'none'
-
-        Swal.fire({
-            position: 'top-end',
-            icon: 'success',
-            title: 'Atendimento Iniciado!',
-            showConfirmButton: false,
-            timer: 1500
-        })
     }
 
 
@@ -601,8 +597,8 @@
 
         msgs.forEach(function (msg) {
             attendant.uuid == msg.origin ?
-                printMsgAttendant(attendant.name, msg.text, attendant.avatar) :
-                printMsgClient(client.name, msg.text, client.avatar)
+                printMsgAttendant(attendant.name, msg.text, msg.date) :
+                printMsgClient(client.name, msg.text, msg.date, client.avatar)
         });
     }
 
