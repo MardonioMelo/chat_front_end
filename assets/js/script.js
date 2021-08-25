@@ -437,8 +437,9 @@
     //Html da msg do cliente
     function printCall(call, uuid, name, text, img, time, active = "", newmsg = false) {
         img = img ? img : "./assets/img/user.png"
+        newmsg = newmsg ? 'block' : 'none'
         let html = `<a href="#" class="list-group-item d-flex gap-3 py-3 m-1 rounded shadow-sm j_item_call animate__animated animate__bounceInDown ${active}" data-call="${call}" data-uuid="${uuid}" aria-current="true">
-                        ${newmsg ? '<span class="position-absolute top-50 start-75 translate-middle p-1 bg-primary border border-white rounded-circle"></span>' : ''}
+                        <span class="position-absolute top-50 start-75 translate-middle p-1 bg-primary border border-white rounded-circle" style="display: ${newmsg}"></span>
                         <img src="${img}" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0 border border-2 border-white">                        
                         <div class="d-flex gap-2 w-100 justify-content-between position-relative">                            
                             <div>
@@ -606,6 +607,7 @@
             printMsgAttendant(attendant.name, input_send.value, hora())
             input_send.value = ""
             snackbarStart()
+            markNewMsg(div_input_msg.dataset.call, false)
         } else {
             notifyWarning("Mensagens vazias não podem ser enviadas!")
         }
@@ -613,9 +615,22 @@
 
     //Print das mensagens recebidas
     function cmdCallMsg(data) {
-        printMsgClient(client.name, data.text, data.date, client.avatar)        
+
+        if (data.call == call.call_id) {
+            printMsgClient(client.name, data.text, data.date, client.avatar)
+            markNewMsg(data.call, false)
+        } else {
+            markNewMsg(data.call, true)
+        }
+
         snackbarPause()
         snackbarReset()
+    }
+
+    //Marcar e desmarcar novas mensagens
+    function markNewMsg(id, newmsg = false) {
+        newmsg = newmsg ? 'block' : 'none'
+        document.querySelector(`.j_item_call[data-call="${id}"] span`).style.display = newmsg
     }
 
     //Iniciar call
