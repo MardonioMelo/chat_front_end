@@ -73,21 +73,24 @@
         return JSON.parse(sessionStorage.getItem("my_setup"))
     }
 
-    //Hora e minutos da mensagem
-    function hora() {
-        let now = new Date;
-        return now.getHours() + ":" + ("0" + now.getMinutes()).slice(-2);
+    //Passa UTC apara Hora e minutos local
+    function formatTime(date) {
+        let now
+        let h
+
+        if (date) {
+            now = new Date(convertLocalDateToUTCDate(date));
+            h = now.getHours() + ":" + ("0" + now.getMinutes()).slice(-2);
+        } else {
+            now = new Date();
+            h = now.getHours() + ":" + ("0" + now.getMinutes()).slice(-2);
+        }
+        return h
     }
 
     //Adicionar mais scroll
     function addScroll() {
         print_msg.scrollTop += 500
-    }
-
-    //Formata data e hora para hora e minutos apenas
-    function formatHora(v) {
-        let now = new Date(v);
-        return now.getHours() + ":" + ("0" + now.getMinutes()).slice(-2);
     }
 
     //Roteamento e troca de estado da página
@@ -152,6 +155,21 @@
         }
     }
 
+    //Converter UTC para data e hora local
+    function convertLocalDateToUTCDate(date, toUTC) {
+        date = new Date(date);
+        //Hora local convertida para UTC     
+        var localOffset = date.getTimezoneOffset() * 60000;
+        var localTime = date.getTime();
+        if (toUTC) {
+            date = localTime + localOffset;
+        } else {
+            date = localTime - localOffset;
+        }
+        date = new Date(date);
+
+        return date;
+    }
 
     //###############
     //  Cronômetro
@@ -463,9 +481,9 @@
             Object.values(calls.clients).forEach(function (data) {
                 active = call_in_progress == data.call.call_id ? 'call-active' : ''
                 if (data.call.call_attendant_uuid == attendant.uuid) { //listar call iniciadas pelo atendente
-                    printCall(data.call.call_id, data.user.uuid, data.user.name, data.call.call_objective, data.user.avatar, formatHora(data.call.call_update), active)
+                    printCall(data.call.call_id, data.user.uuid, data.user.name, data.call.call_objective, data.user.avatar, formatTime(data.call.call_update), active)
                 } else if (data.call.call_status == '1') { //listar call não iniciadas ainda
-                    printCall(data.call.call_id, data.user.uuid, data.user.name, data.call.call_objective, data.user.avatar, formatHora(data.call.call_update), active)
+                    printCall(data.call.call_id, data.user.uuid, data.user.name, data.call.call_objective, data.user.avatar, formatTime(data.call.call_update), active)
                 } else { //listar call iniciadas por outros atendentes
                     //será implementado posteriormente                   
                 }
@@ -537,7 +555,7 @@
         client = data_calls[`call_${call_id}`].user
         print_msg.innerHTML = ''
 
-        printMsgClient(client.name, call.call_objective, formatHora(call.call_update), client.avatar)
+        printMsgClient(client.name, call.call_objective, formatTime(call.call_update), client.avatar)
 
         sendMessage({
             "cmd": "cmd_call_history",
@@ -563,8 +581,7 @@
 
     //Escreve msg do cliente
     function printMsgClient(name, text, time = false, img = false) {
-        img = img ? img : "./assets/img/user.png"
-        time = time ? time : hora()
+        img = img ? img : "./assets/img/user.png"        
         let html = ` <div class="list-group-item list-group-item d-flex gap-3 py-3 p-3 w-75 m-2 shadow msg-right animate__animated animate__fadeInDown">
                         <img src="${img}" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">
                         <div class="d-flex gap-2 w-100 justify-content-between">
@@ -580,8 +597,7 @@
     }
 
     //Html da msg do atendente
-    function printMsgAttendant(name, text, time) {
-        time = time ? time : hora()
+    function printMsgAttendant(name, text, time) {       
         let html = `<div class="list-group-item list-group-item d-flex gap-3 py-3 p-3 w-75 m-2 shadow align-self-end msg-left animate__animated animate__fadeInDown">
                         <div class="d-flex gap-2 w-100 justify-content-between">
                             <div>
@@ -604,7 +620,7 @@
                 "call": div_input_msg.dataset.call,
                 "text": input_send.value
             })
-            printMsgAttendant(attendant.name, input_send.value, hora())
+            printMsgAttendant(attendant.name, input_send.value, formatTime())
             input_send.value = ""
             snackbarStart()
             markNewMsg(div_input_msg.dataset.call, false)
@@ -613,11 +629,12 @@
         }
     }
 
+
     //Print das mensagens recebidas
     function cmdCallMsg(data) {
 
         if (data.call == call.call_id) {
-            printMsgClient(client.name, data.text, data.date, client.avatar)
+            printMsgClient(client.name, data.text, formatTime(data.date), client.avatar)
             markNewMsg(data.call, false)
         } else {
             markNewMsg(data.call, true)
@@ -676,10 +693,10 @@
     function printHistory(msgs) {
         attendant = getUser()
 
-        msgs.forEach(function (msg) {
+        msgs.forEach(function (msg) {          
             attendant.uuid == msg.origin ?
-                printMsgAttendant(attendant.name, msg.text, msg.date) :
-                printMsgClient(client.name, msg.text, msg.date, client.avatar)
+                printMsgAttendant(attendant.name, msg.text,formatTime(msg.date)) :
+                printMsgClient(client.name, msg.text, formatTime(msg.date), client.avatar)
         });
     }
 
