@@ -43,10 +43,10 @@
     var second = 0
     var millisecond = 0
     var cron
-    const snackbar_hour = document.getElementById('snackbar_hour')
-    const snackbar_minute = document.getElementById('snackbar_minute')
-    const snackbar_second = document.getElementById('snackbar_second')
-    const snackbar_millisecond = document.getElementById('snackbar_millisecond')
+    const stopwatch_hour = document.getElementById('j_stopwatch_hour')
+    const stopwatch_minute = document.getElementById('j_stopwatch_minute')
+    const stopwatch_second = document.getElementById('j_stopwatch_second')
+    const stopwatch_millisecond = document.getElementById('j_stopwatch_millisecond')
     //Comandos
     const cmd = {
         cmd_connection: cmdConnection,
@@ -176,30 +176,30 @@
     //###############
 
     //Start
-    function snackbarStart() {
-        snackbarPause()
-        cron = setInterval(() => { timer(); }, 10)
+    function stopwatchStart() {
+        stopwatchPause()
+        cron = setInterval(() => { stopwatchTimer(); }, 10)
     }
 
     //Pause
-    function snackbarPause() {
+    function stopwatchPause() {
         clearInterval(cron)
     }
 
     //Reset
-    function snackbarReset() {
+    function stopwatchReset() {
         hour = 0
         minute = 0
         second = 0
         millisecond = 0
-        snackbar_hour.innerText = '00'
-        snackbar_minute.innerText = '00'
-        snackbar_second.innerText = '00'
-        snackbar_millisecond.innerText = '000'
+        stopwatch_hour.innerText = '00'
+        stopwatch_minute.innerText = '00'
+        stopwatch_second.innerText = '00'
+        stopwatch_millisecond.innerText = '000'
     }
 
     //Tempo
-    function timer() {
+    function stopwatchTimer() {
         if ((millisecond += 10) == 1000) {
             millisecond = 0
             second++
@@ -212,15 +212,45 @@
             minute = 0
             hour++
         }
-        snackbar_hour.innerText = returnData(hour)
-        snackbar_minute.innerText = returnData(minute)
-        snackbar_second.innerText = returnData(second)
-        snackbar_millisecond.innerText = returnData(millisecond)
+        stopwatch_hour.innerText = stopwatchReturnData(hour)
+        stopwatch_minute.innerText = stopwatchReturnData(minute)
+        stopwatch_second.innerText = stopwatchReturnData(second)
+        stopwatch_millisecond.innerText = stopwatchReturnData(millisecond)
     }
 
     //Retorno
-    function returnData(input) {
+    function stopwatchReturnData(input) {
         return input > 10 ? input : `0${input}`
+    }
+
+    //Continuar contagem desde a ultima mensagem
+    function stopwatchToBeContinue(date) {
+        let before_obj
+        let now_obj
+        let diff
+        let h
+        let m
+        let s
+
+        stopwatchPause()
+        stopwatchReset()
+
+        if (date) {
+            before_obj = new Date(convertLocalDateToUTCDate(date))
+            now_obj = new Date()
+
+            diff = Math.abs(now_obj.getTime() - before_obj.getTime());
+            h = diff / (1000 * 60 * 60);
+            m = (h - parseInt(h)) * 60;
+            s = (m - parseInt(m)) * 60;
+
+            hour = parseInt(h)
+            minute = parseInt(m)
+            second = parseInt(s)
+            millisecond = 0
+
+            stopwatchStart()
+        }
     }
 
 
@@ -452,7 +482,7 @@
         sessionStorage.setItem('call_in_progress', this.dataset.call)
     }
 
-    //Html da msg do cliente
+    //Mensagem do cliente referente ao assunto da call
     function printCall(call, uuid, name, text, img, time, active = "", newmsg = false) {
         img = img ? img : "./assets/img/user.png"
         newmsg = newmsg ? 'block' : 'none'
@@ -581,7 +611,7 @@
 
     //Escreve msg do cliente
     function printMsgClient(name, text, time = false, img = false) {
-        img = img ? img : "./assets/img/user.png"        
+        img = img ? img : "./assets/img/user.png"
         let html = ` <div class="list-group-item list-group-item d-flex gap-3 py-3 p-3 w-75 m-2 shadow msg-right animate__animated animate__fadeInDown">
                         <img src="${img}" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">
                         <div class="d-flex gap-2 w-100 justify-content-between">
@@ -597,7 +627,7 @@
     }
 
     //Html da msg do atendente
-    function printMsgAttendant(name, text, time) {       
+    function printMsgAttendant(name, text, time) {
         let html = `<div class="list-group-item list-group-item d-flex gap-3 py-3 p-3 w-75 m-2 shadow align-self-end msg-left animate__animated animate__fadeInDown">
                         <div class="d-flex gap-2 w-100 justify-content-between">
                             <div>
@@ -621,14 +651,14 @@
                 "text": input_send.value
             })
             printMsgAttendant(attendant.name, input_send.value, formatTime())
-            input_send.value = ""
-            snackbarStart()
+            input_send.value = ""          
+            stopwatchReset()
+            stopwatchStart()
             markNewMsg(div_input_msg.dataset.call, false)
         } else {
             notifyWarning("Mensagens vazias não podem ser enviadas!")
         }
     }
-
 
     //Print das mensagens recebidas
     function cmdCallMsg(data) {
@@ -639,9 +669,8 @@
         } else {
             markNewMsg(data.call, true)
         }
-
-        snackbarPause()
-        snackbarReset()
+        stopwatchPause()
+        stopwatchReset()
     }
 
     //Marcar e desmarcar novas mensagens
@@ -691,13 +720,30 @@
 
     //Listar histórico de mensagens
     function printHistory(msgs) {
+        let date //UTC da ultima mensagem do cliente
+        let stopwatch = false
         attendant = getUser()
 
-        msgs.forEach(function (msg) {          
-            attendant.uuid == msg.origin ?
-                printMsgAttendant(attendant.name, msg.text,formatTime(msg.date)) :
+        msgs.forEach(function (msg) {
+            if (attendant.uuid == msg.origin) {
+                stopwatch = true
+                date = msg.date
+                printMsgAttendant(attendant.name, msg.text, formatTime(msg.date))
+            } else {
+                stopwatch = false
                 printMsgClient(client.name, msg.text, formatTime(msg.date), client.avatar)
+            }
         });
+        if (stopwatch) {
+            if (date) {
+                stopwatchToBeContinue(date)
+            } else {
+                stopwatchToBeContinue(call.call_update)
+            }
+        } else {
+            stopwatchPause()
+            stopwatchReset()
+        }
     }
 
 

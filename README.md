@@ -23,8 +23,10 @@ O único requisito é executar este script antes de carregar a pagina do chat:
     sessionStorage.setItem("identity", JSON.stringify({
         "uuid": string, //UUID ou CPF
         "type": "attendant",
-        "public": string //chave pública
-    }))  
+        "public": string, //chave pública
+        "host_http": string,
+        "host_ws": string
+    }))   
 >
 
 Lembre-se que os dados desse script devem ser informados dinamicamente conforme usuário logado em seu sistema.
