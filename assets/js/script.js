@@ -54,7 +54,9 @@
         cmd_call_history: cmdCallHistory,
         cmd_check_user_on: cmdCheckUserOn,
         cmd_call_msg: cmdCallMsg,
-        cmd_call_start: cmdCallStart
+        cmd_call_start: cmdCallStart,
+        cmd_token_expired: cmdTokenExpired,
+        cmd_error: cmdError
     }
 
     /* global bootstrap: false */
@@ -169,6 +171,19 @@
         date = new Date(date);
 
         return date;
+    }
+
+    //Comando de token expirado
+    function cmdTokenExpired(data) {       
+        notifyPrimary("O seu acesso ao chat expirou, vamos renova-lo em 5 segundos")
+        setTimeout(function () {
+            document.location.reload()
+        }, 5000)
+    }
+
+    //Comando de error
+    function cmdError(data) {
+        notifyError(data.msg)
     }
 
     //###############
@@ -286,7 +301,7 @@
                     if (res.data.result) {
                         saveDataToken(res.data.error)
                         requestPerfil(res.data.error.token)
-                        initSocket()
+                        initSocket(res.data.error.token)
                     } else {
                         changeState('conectar')
                         notifyError(res.data.error.msg)
@@ -390,9 +405,9 @@
     //###############
 
     //Abrir conexão
-    function initSocket() {
+    function initSocket(token) {
 
-        conn_ws = new WebSocket(`${url_ws}/?t=${getToken()}`);
+        conn_ws = new WebSocket(`${url_ws}/?t=${token}`);
 
         //Evento ao abrir conexão
         conn_ws.addEventListener('open', open => {
@@ -410,7 +425,7 @@
             if (messages.result) {
                 cmd[messages.error.data.cmd](messages.error.data)
             } else {
-                notifyInfo(messages.error.msg)
+                notifyPrimary(messages.error.msg)
             }
         })
 
@@ -651,7 +666,7 @@
                 "text": input_send.value
             })
             printMsgAttendant(attendant.name, input_send.value, formatTime())
-            input_send.value = ""          
+            input_send.value = ""
             stopwatchReset()
             stopwatchStart()
             markNewMsg(div_input_msg.dataset.call, false)
@@ -768,7 +783,7 @@
         if (checkExpToken()) {
             createToken()
         } else {
-            initSocket()
+            initSocket(getToken())
             requestPerfil(getToken())
         }
     }

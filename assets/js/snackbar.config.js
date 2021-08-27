@@ -54,7 +54,7 @@
 
     notifyPrimary = (msg) => {
         Snackbar.show({
-            text: `<i class="bi bi-emoji-smile" style="font-size: 1rem;"></i> ${msg}`,
+            text: `<i class="bi bi-broadcast" style="font-size: 1rem;"></i> ${msg}`,
             pos: 'bottom-left',
             customClass: "rounded border-5 border-primary border-start",
             actionText: `<i class="bi bi-x-lg"></i>`,
