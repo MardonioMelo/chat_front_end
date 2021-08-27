@@ -1,7 +1,7 @@
 /* -------- */
 
 body { 
-  min-height: 100vh;
+  min-height: 100vh !important;
   min-height: -webkit-fill-available;
   height: 100vh;
   color: #ffffff73;
@@ -158,4 +158,8 @@ textarea::-webkit-scrollbar-thumb {
 
 textarea{
   cursor: default !important;
+}
+
+body.swal2-height-auto{
+  height: 100vh !important;
 }

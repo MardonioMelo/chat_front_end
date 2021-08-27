@@ -35,21 +35,33 @@
             </a>
             <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
                 <li class="nav-item">
-                    <a href="#" class="nav-link active py-3" aria-current="page" title="Chat" data-bs-toggle="tooltip"
+                    <a href="javascript:;" class="nav-link active py-3" title="Chat" data-bs-toggle="tooltip"
                         data-bs-placement="right">
-                        <i class="bi bi-chat-left-text-fill icon-navbar"></i>
+                        <i class="bi bi-chat-left-text icon-navbar"></i>
                     </a>
                 </li>
-                <li>
-                    <a href="#" class="nav-link py-3" title="Histórico" data-bs-toggle="tooltip"
+                <li class="nav-item">
+                    <a href="javascript:;" class="nav-link py-3" title="Observar Outros [Em breve]"
+                        data-bs-toggle="tooltip" data-bs-placement="right">
+                        <i class="bi bi-door-open icon-navbar"></i>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="javascript:;" class="nav-link py-3" title="Histórico [Em breve]" data-bs-toggle="tooltip"
                         data-bs-placement="right">
                         <i class="bi bi-clock-history icon-navbar"></i>
                     </a>
                 </li>
-                <li>
-                    <a href="#" class="nav-link py-3" title="Usuários" data-bs-toggle="tooltip"
+                <li class="nav-item">
+                    <a href="javascript:;" class="nav-link py-3" title="Usuários [Em breve]" data-bs-toggle="tooltip"
                         data-bs-placement="right">
-                        <i class="bi bi-person-circle icon-navbar"></i>
+                        <i class="bi bi-people icon-navbar"></i>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="javascript:;" class="nav-link py-3" title="Avaliações [Em breve]" data-bs-toggle="tooltip"
+                        data-bs-placement="right">
+                        <i class="bi bi-award icon-navbar"></i>
                     </a>
                 </li>
             </ul>
@@ -61,15 +73,23 @@
                         class="rounded-circle j_perfil_img">
                 </a>
                 <ul class="dropdown-menu dropdown-menu-dark text-small" aria-labelledby="dropdownUser3">
-                    <li class="p-2 mb-2 bg-dark border-bottom border-dark j_perfil_name"></li>
-                    <li><a class="dropdown-item" href="#">Configurações <span class="badge bg-danger">Em
-                                breve</span></a>
+                    <li class="p-2 mb-2 bg-dark border-bottom border-dark"><i class="bi bi-person"></i> <span
+                            class="j_perfil_name"></span></li>
+                    <li>
+                        <a class="dropdown-item" href="#">
+                            <i class="bi bi-gear"></i> Configurações <span class="badge bg-danger">Em breve</span>
+                        </a>
                     </li>
-                    <li><a class="dropdown-item" href="#">Perfíl <span class="badge bg-danger">Em breve</span></a></li>
+                    <li>
+                        <a class="dropdown-item" href="#">
+                            <i class="bi bi-person-badge"></i> Perfíl <span class="badge bg-danger">Em breve</span>
+                        </a>
+                    </li>
                     <li>
                         <hr class="dropdown-divider">
                     </li>
-                    <li><a class="dropdown-item" id="j_btn_logout" href="javascript:void(0);">Sair</a></li>
+                    <li><a class="dropdown-item" id="j_btn_logout" href="javascript:void(0);"><i
+                                class="bi bi-box-arrow-left"></i> Sair</a></li>
                 </ul>
             </div>
         </div>
@@ -89,6 +109,7 @@
         <!-- Start Chat -->
         <div class="container-fluid d-flex flex-column bg-chat">
 
+            <!-- Cabeçalho do chat -->
             <div class="py-3 mb-1 border-bottom" id="j_div_header_chat" style="display: none;">
                 <div href="#" class="d-flex gap-3 py-1">
                     <img src="" alt="img" width="32" height="32" class="rounded-circle flex-shrink-0">
@@ -100,31 +121,27 @@
                                 <span class="badge rounded-pill bg-light text-danger">
                                     <i class="bi bi-alarm"></i>
                                     <abbr id="j_stopwatch_hour">00</abbr>:<abbr id="j_stopwatch_minute">00</abbr>:<abbr
-                                        id="j_stopwatch_second">00</abbr>:<abbr id="j_stopwatch_millisecond">000</abbr>
+                                        id="j_stopwatch_second">00</abbr><abbr id="j_stopwatch_millisecond"
+                                        class="d-none">000</abbr>
                                 </span>
                             </p>
                         </div>
-                        <small class="text-nowrap">
-                            <button type="button" class="btn btn-outline-warning me-2">
-                                <i class="bi bi-door-closed-fill"></i> Finalizar
+                        <small class="text-nowrap me-2">
+                            <button type="button" class="btn btn-outline-danger btn-sm" id="j_btn_cancel_call"
+                                title="Cancelar atendimento">
+                                <i class="bi bi-telephone-minus"></i> Cancelar
+                            </button>
+                            <button type="button" class="btn btn-outline-warning btn-sm" id="j_btn_end_call"
+                                title="Finalizar atendimento">
+                                <i class="bi bi-telephone-x"></i> Finalizar
                             </button>
                         </small>
                     </div>
                 </div>
             </div>
-            <div class="list-group list-group-flush scrollarea" id="j_print_msg">
-                <!--Alerta de Sucesso-->
-                <!-- <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <strong><i class="bi bi-check2-circle"></i> Sucesso </strong> ao finalizar o atendimento!
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div> -->
 
-                <!--Alerta de Erro-->
-                <!-- <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <strong><i class="bi bi-check2-circle"></i> Opss! </strong> Não foi possível finalizar o
-                atendimento!
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                 </div> -->
+            <!-- Mensagens do chat -->
+            <div class="list-group list-group-flush scrollarea" id="j_print_msg">
             </div>
 
             <!-- Botão para iniciar atendimento -->
@@ -133,7 +150,7 @@
                 <div class="d-grid col-6 mx-auto">
                     <button type="button" class="btn fw-bold animate__animated animate__jello" id="j_btn_start_call"
                         type="button">
-                        <i class="bi bi-caret-left"></i> Iniciar Atendimento
+                        <i class="bi bi-telephone-inbound p-1"></i> Iniciar Atendimento
                     </button>
                 </div>
             </div>

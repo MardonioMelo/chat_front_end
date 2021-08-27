@@ -29,6 +29,8 @@
     const print_msg = document.getElementById('j_print_msg')
     const print_calls = document.getElementById('j_print_calls')
     const btn_start_call = document.getElementById('j_btn_start_call')
+    const btn_end_call = document.getElementById('j_btn_end_call')
+    const btn_cancel_call = document.getElementById('j_btn_cancel_call')
     //Variáveis de dados   
     var attendant = null
     var conn_ws = null
@@ -56,7 +58,9 @@
         cmd_call_msg: cmdCallMsg,
         cmd_call_start: cmdCallStart,
         cmd_token_expired: cmdTokenExpired,
-        cmd_error: cmdError
+        cmd_error: cmdError,
+        cmd_call_end: cmdCallEnd,
+        cmd_call_cancel: cmdCallCancel
     }
 
     /* global bootstrap: false */
@@ -155,6 +159,8 @@
                 return false
             }
         }
+        btn_end_call.onclick = () => endCall()
+        btn_cancel_call.onclick = () =>cancelCall()
     }
 
     //Converter UTC para data e hora local
@@ -174,7 +180,7 @@
     }
 
     //Comando de token expirado
-    function cmdTokenExpired(data) {       
+    function cmdTokenExpired(data) {
         notifyPrimary("O seu acesso ao chat expirou, vamos renova-lo em 5 segundos")
         setTimeout(function () {
             document.location.reload()
@@ -419,8 +425,7 @@
 
         //Evento ao enviar/receber mensagens
         conn_ws.addEventListener('message', message => {
-            messages = JSON.parse(message.data)
-            console.log(messages)
+            messages = JSON.parse(message.data)          
 
             if (messages.result) {
                 cmd[messages.error.data.cmd](messages.error.data)
@@ -539,7 +544,14 @@
                 data.addEventListener('click', activeCall, false);
             })
 
-            data_calls = calls.clients
+            data_calls = calls.clients      
+            
+            if(!sessionStorage.getItem('call_in_progress')){
+                htmlInfoInitCall()
+            }
+            if(item_call.length == 0){
+                print_calls.innerHTML = '<span class="text-center p-1">Lista vazia.</span>'
+            }
         } else {
             data_calls = null
         }
@@ -552,6 +564,11 @@
                             <h2><i class="bi bi-arrow-left"></i> Clique em um cliente da lista.</h2>
                         </div>
                     </div>`
+        let html2 = `<div class="card bg-dark gap-3 py-3 p-2 m-5 shadow-lg rounded animate__animated animate__backInUp animate__delay-2s">
+                    <div class="card-body text-center">
+                        <h2><i class="bi bi-emoji-sunglasses"></i> A fila está vazia.</h2>
+                    </div>
+                </div>`
         let call_in_progress = sessionStorage.getItem('call_in_progress')
 
         //Verificar se alguma ja foi selecionada antes       
@@ -560,6 +577,12 @@
         } else {
             print_msg.innerHTML = ''
             print_msg.insertAdjacentHTML('beforeend', html)
+            setTimeout(function () {
+                if (item_call.length == 0) {   
+                    print_msg.innerHTML = ''            
+                    print_msg.insertAdjacentHTML('beforeend', html2)
+                }
+            }, 1000)
         }
     }
 
@@ -588,6 +611,8 @@
             div_header_chat.querySelector('img').src = './assets/img/user.png'
             div_header_chat.querySelector('h6').innerText = 'Cliente'
             div_input_msg.dataset.call = ""
+            stopwatchPause()
+            stopwatchReset()
         }
     }
 
@@ -721,6 +746,97 @@
         notifyPrimary("Atendimento iniciado, boa sorte!")
         div_input_msg.style.display = 'flex'
         div_start_call.style.display = 'none'
+    }
+
+    //Finalizar call
+    function endCall() {
+
+        Swal.fire({
+            title: 'Finalizar este atendimento?',
+            text: "Se finalizar este atendimento não será possível enviar ou receber mais mensagens!",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sim, finalizar este!',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                sendMessage({
+                    "cmd": "cmd_call_end",
+                    "call": call.call_id
+                })
+            }
+        })
+    }
+
+    //Comando finalizar call
+    function cmdCallEnd(data) {
+        let html = `<div class="card bg-dark gap-3 py-3 p-2 m-5 shadow-lg rounded animate__animated animate__flipInX animate__delay-2s">
+        <div class="card-body text-center">
+            <h2><i class="bi bi-hand-thumbs-up"></i> Bom trabalho ${attendant.name}!</h2>
+        </div>
+        </div>`
+        attendant = getUser()    
+        div_input_msg.style.display = 'none'
+        div_start_call.style.display = 'none'   
+        print_msg.innerHTML = ''
+       
+        sessionStorage.removeItem('call_in_progress')      
+        headerChat()      
+      
+        setTimeout(function () {
+            if (item_call.length == 0) {               
+                print_msg.insertAdjacentHTML('beforeend', html)
+            }
+        }, 1000)
+
+        notifyPrimary("Atendimento finalizado com sucesso!")
+    }
+
+    //Cancelar call
+    function cancelCall(){
+        Swal.fire({
+            title: 'Cancelar este atendimento?',
+            text: "Se cancelar este atendimento não será possível realizar outras ações para o mesmo!",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sim',
+            cancelButtonText: 'Não'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                sendMessage({
+                    "cmd": "cmd_call_cancel",
+                    "call": call.call_id
+                })
+            }
+        })
+    }
+
+    //Comando cancelar call
+    function cmdCallCancel(){
+        let html = `<div class="card bg-dark gap-3 py-3 p-2 m-5 shadow-lg rounded animate__animated animate__flipInX animate__delay-2s">
+        <div class="card-body text-center">
+            <h2><i class="bi bi-hand-thumbs-up"></i> Bom trabalho ${attendant.name}!</h2>
+        </div>
+        </div>`
+        attendant = getUser()    
+        div_input_msg.style.display = 'none'
+        div_start_call.style.display = 'none'   
+        print_msg.innerHTML = ''
+       
+        sessionStorage.removeItem('call_in_progress')      
+        headerChat()      
+      
+        setTimeout(function () {
+            if (item_call.length == 0) {               
+                print_msg.insertAdjacentHTML('beforeend', html)
+            }
+        }, 1000)
+
+        notifyPrimary("Atendimento cancelado com sucesso!")
     }
 
 
