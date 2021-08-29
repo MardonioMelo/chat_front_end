@@ -2,10 +2,6 @@
 Front-end de um chat para consumo da [API Chat de Atendimento](https://github.com/MardonioMelo/chat_api).
 
 
-<h4 align="left"> 
-	🚧  Em construção...  🚧
-</h4>
-
 # Instalação
 Clone/baixe este repositório na sua aplicação/sistema e crie um link para acesso a esta pasta.
 
@@ -15,6 +11,25 @@ Execute este comando dentro da pasta para instalar as dependências:
 >
 
 # Configuração
+
+## Base URL/URI
+
+Defina a base URL/URI, ou sejá, a URL até a pasta desse projeto localizada no seu sistema.
+
+Por exemplo se o seu sistema for em PHP:
+- Crie um arquivo php onde o chat do atendente deve ser carregado
+- Neste arquivo inclua a tag HTML `<base>` e no href dela informe o caminho URL relativo até a pasta desse projeto.
+- Importe o arquivo index.html desse projeto apos a tag HTML `<base>`
+
+Ficaria assim o conteúdo do arquivo index.php:
+>
+    <base href="http://localhost/chat_front_end/">
+    <?php
+    include "./chat_front_end/index.html";
+>
+
+
+## Integração
 
 Para configurar a integração, renomeie o arquivo <code>exemple.main.js</code> para <code>main.js</code> e edite as informações do seu conteúdo. As informações do usuário podem ser passadas de forma dinâmica conforme seu aplicativo. Por exemplo, você pode implementar dentro desse arquivo uma busca no seu sistema para obter os dados a serem informados.
 
