@@ -160,7 +160,7 @@
             }
         }
         btn_end_call.onclick = () => endCall()
-        btn_cancel_call.onclick = () =>cancelCall()
+        btn_cancel_call.onclick = () => cancelCall()
     }
 
     //Converter UTC para data e hora local
@@ -425,7 +425,7 @@
 
         //Evento ao enviar/receber mensagens
         conn_ws.addEventListener('message', message => {
-            messages = JSON.parse(message.data)          
+            messages = JSON.parse(message.data)
 
             if (messages.result) {
                 cmd[messages.error.data.cmd](messages.error.data)
@@ -544,12 +544,12 @@
                 data.addEventListener('click', activeCall, false);
             })
 
-            data_calls = calls.clients      
-            
-            if(!sessionStorage.getItem('call_in_progress')){
+            data_calls = calls.clients
+
+            if (!sessionStorage.getItem('call_in_progress')) {
                 htmlInfoInitCall()
             }
-            if(item_call.length == 0){
+            if (item_call.length == 0) {
                 print_calls.innerHTML = '<span class="text-center p-1">Lista vazia.</span>'
             }
         } else {
@@ -578,8 +578,8 @@
             print_msg.innerHTML = ''
             print_msg.insertAdjacentHTML('beforeend', html)
             setTimeout(function () {
-                if (item_call.length == 0) {   
-                    print_msg.innerHTML = ''            
+                if (item_call.length == 0) {
+                    print_msg.innerHTML = ''
                     print_msg.insertAdjacentHTML('beforeend', html2)
                 }
             }, 1000)
@@ -703,12 +703,13 @@
     //Print das mensagens recebidas
     function cmdCallMsg(data) {
 
-        if (data.call == call.call_id) {
+        if (data && call && data.call == call.call_id) {
             printMsgClient(client.name, data.text, formatTime(data.date), client.avatar)
             markNewMsg(data.call, false)
-        } else {
+        } else if (data) {
             markNewMsg(data.call, true)
         }
+
         stopwatchPause()
         stopwatchReset()
     }
@@ -777,16 +778,16 @@
             <h2><i class="bi bi-hand-thumbs-up"></i> Bom trabalho ${attendant.name}!</h2>
         </div>
         </div>`
-        attendant = getUser()    
+        attendant = getUser()
         div_input_msg.style.display = 'none'
-        div_start_call.style.display = 'none'   
+        div_start_call.style.display = 'none'
         print_msg.innerHTML = ''
-       
-        sessionStorage.removeItem('call_in_progress')      
-        headerChat()      
-      
+
+        sessionStorage.removeItem('call_in_progress')
+        headerChat()
+
         setTimeout(function () {
-            if (item_call.length == 0) {               
+            if (item_call.length == 0) {
                 print_msg.insertAdjacentHTML('beforeend', html)
             }
         }, 1000)
@@ -795,7 +796,7 @@
     }
 
     //Cancelar call
-    function cancelCall(){
+    function cancelCall() {
         Swal.fire({
             title: 'Cancelar este atendimento?',
             text: "Se cancelar este atendimento não será possível realizar outras ações para o mesmo!",
@@ -816,22 +817,22 @@
     }
 
     //Comando cancelar call
-    function cmdCallCancel(){
+    function cmdCallCancel() {
         let html = `<div class="card bg-dark gap-3 py-3 p-2 m-5 shadow-lg rounded animate__animated animate__flipInX animate__delay-2s">
         <div class="card-body text-center">
             <h2><i class="bi bi-hand-thumbs-up"></i> Bom trabalho ${attendant.name}!</h2>
         </div>
         </div>`
-        attendant = getUser()    
+        attendant = getUser()
         div_input_msg.style.display = 'none'
-        div_start_call.style.display = 'none'   
+        div_start_call.style.display = 'none'
         print_msg.innerHTML = ''
-       
-        sessionStorage.removeItem('call_in_progress')      
-        headerChat()      
-      
+
+        sessionStorage.removeItem('call_in_progress')
+        headerChat()
+
         setTimeout(function () {
-            if (item_call.length == 0) {               
+            if (item_call.length == 0) {
                 print_msg.insertAdjacentHTML('beforeend', html)
             }
         }, 1000)
